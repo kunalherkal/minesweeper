@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject._
+import models.Panel
 import play.api._
 import play.api.mvc._
 
@@ -18,6 +19,7 @@ class HomeController @Inject() extends Controller {
    * a path of `/`.
    */
   def index = Action {
+    val grid = Panel(9)
     Ok(views.html.index("Your new application is ready."))
   }
 
