@@ -1,11 +1,9 @@
 package controllers
 
 import javax.inject._
-import julienrf.json.derived
-import models.{Cell, Panel}
+import models.Panel
 import play.api.mvc._
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
