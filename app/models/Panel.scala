@@ -14,14 +14,14 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
     clickedCell match {
       case Cell("*", _, _, _) => mineClicked()
       case Cell(" ", _, _, _) => Panel(dimension, grid, "InProgress")
-      case Cell(_, _, _, _) => Panel(dimension, grid, "In Progress")
+      case Cell(_, _, _, _) => numberClicked(clickedCell)
       case _ => throw new IllegalArgumentException("Unexpected input")
     }
   }
 
   def mineClicked() : Panel = {
     val newGrid = grid.map(row => row.map(cell => {
-      Cell(cell.value, cell.rowIndex, cell.colIndex, false)
+      Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
     }))
     Panel(dimension, newGrid, "Failed")
   }
@@ -30,8 +30,14 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
     ???
   }
 
-  def numberClicked() : Panel = {
-    ???
+  def numberClicked(clickedCell : Cell) : Panel = {
+    val newGrid = grid.map(row => row.map(cell =>
+      cell match {
+        case `clickedCell` => Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
+        case _ => cell
+      }
+    ))
+    Panel(dimension, newGrid, "In Progress")
   }
 
   override def toString: String = {
