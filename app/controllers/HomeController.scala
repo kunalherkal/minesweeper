@@ -39,7 +39,7 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
       },
       panelSubmit => {
         println("Panel received: " + panelSubmit)
-        val panel = panelService.validate(panelSubmit)
+        val panel = panelService.process(panelSubmit)
         val panelJson = Json.toJson(panel)
         println("Panel sent: " + panelJson)
         Ok(panelJson)

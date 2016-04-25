@@ -7,7 +7,7 @@ import models.{PanelSubmit, Panel}
   */
 class PanelService {
 
-  def validate(panelSubmit: PanelSubmit): Panel = {
+  def process(panelSubmit: PanelSubmit): Panel = {
     panelSubmit.panel.solve(panelSubmit.clickedRowIndex, panelSubmit.clickedColIndex)
   }
 

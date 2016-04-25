@@ -1,19 +1,19 @@
 package models
 
 import play.api.libs.json.Json
-
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
 case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InProgress") {
 
-  require(grid.size == dimension)
+  require(grid.length == dimension)
 
   def solve(clickedRow:Int, clickedCol: Int): Panel = {
     val clickedCell = grid(clickedRow)(clickedCol)
+
     clickedCell match {
       case Cell("*", _, _, _) => mineClicked()
-      case Cell(" ", _, _, _) => Panel(dimension, grid, "InProgress")
+      case Cell(" ", _, _, _) => emptyClicked(clickedCell)
       case Cell(_, _, _, _) => numberClicked(clickedCell)
       case _ => throw new IllegalArgumentException("Unexpected input")
     }
@@ -21,13 +21,33 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
 
   def mineClicked() : Panel = {
     val newGrid = grid.map(row => row.map(cell => {
-      Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
+      if(cell.value == "*") Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
+      else cell
     }))
     Panel(dimension, newGrid, "Failed")
   }
 
-  def emptyClicked() : Panel = {
-    ???
+  def emptyClicked(clickedCell : Cell) : Panel = {
+
+    def loop(originalList: List[Cell], formedList: List[Cell]): List[Cell] = originalList match {
+      case Nil => formedList
+      case head :: tail if head.value != " " => loop(tail, formedList)
+      case head :: tail if head.value == " " =>
+        val adjCells = Panel.adjacentCells(grid, head.rowIndex, head.colIndex, 1)
+        val newCells = adjCells.map(c => if(!formedList.contains(c)) c else Cell("K", 999, 999))
+        val validCells = newCells.filter(c => c.value != "K")
+        loop(tail ++ validCells, formedList ++ validCells)
+    }
+
+
+    val exposedCells = loop(List(clickedCell), List(clickedCell))
+
+    val newGrid = grid.map(row => row.map(cell => {
+      if(exposedCells.contains(cell)) Cell(cell.value, cell.rowIndex, cell.colIndex, false)
+      else cell
+    }))
+
+    Panel(dimension, newGrid, "In Progress")
   }
 
   def numberClicked(clickedCell : Cell) : Panel = {
@@ -103,7 +123,11 @@ object Panel {
     util.Random.shuffle(0 to 80).toArray.take(n)
   }
 
-  def adjacentGrid(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int) : List[String] = {
+  def adjacentCellValues(list: List[Cell]) : List[String] = {
+    list.filter(c => c.value != "K").map(c => c.value)
+  }
+
+  def adjacentCells(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
     val rows = arr.length
     val columns = arr(0).length
 
@@ -114,13 +138,16 @@ object Panel {
 
     (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
       val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
-      if(validElement) arr(row)(column).value else " "
+        if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
+          arr(row)(column)
+        } else Cell("K", 999, 999, hidden = true)
     })).toList
   }
 
   def adjacentMines(arr: Array[Array[Cell]], element: Cell): Int = {
-    val l = adjacentGrid(arr, element.rowIndex, element.colIndex, 1)
-    l map isMine sum
+    val adjCells = adjacentCells(arr, element.rowIndex, element.colIndex, 1)
+    val adjCellValues = adjacentCellValues(adjCells)
+    adjCellValues map isMine sum
   }
 
   def isMine(s: String): Int = {
