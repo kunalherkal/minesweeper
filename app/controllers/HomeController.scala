@@ -1,9 +1,11 @@
 package controllers
 
 import javax.inject._
-import models.Panel
-import play.api._
+import julienrf.json.derived
+import models.{Cell, Panel}
 import play.api.mvc._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -18,14 +20,16 @@ class HomeController @Inject() extends Controller {
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
+
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
 
   def getPanel = Action {
-    val grid: Panel = Panel(9)
-    println(grid)
-    Ok(grid.toString)
+    val panel: Panel = Panel(9)
+    val panelJson: JsValue = Json.toJson(panel)
+    println(panelJson)
+    Ok(panelJson)
   }
 
 }

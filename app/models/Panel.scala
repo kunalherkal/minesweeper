@@ -1,18 +1,22 @@
 package models
 
+import play.api.libs.json.Json
+
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
-case class Panel(dimension: Int, grid: Array[Array[Cell]], status: Status = InProgress) {
+case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InProgress") {
+
   require(grid.size == dimension)
 
   override def toString: String = {
     val arr = grid.flatMap(row => row.map(cell => cell.toString)).toSeq
-    "Grid: \n" + arr.toString.drop(12) + "\nDimension: " + dimension + "\nStatus: " + status
+    "Grid: \n" + arr.toString.drop(12) + "\nDimension: " + dimension //+ "\nStatus: " + status
   }
 }
 
-object Panel extends App {
+object Panel {
+  implicit val userFormat = Json.format[Panel]
 
   def apply(dimension : Int): Panel = {
     apply(dimension, Panel.newGrid(dimension))
@@ -22,17 +26,17 @@ object Panel extends App {
     apply(grid.length, grid)
   }
 
-  def generate(size : Int) : Array[Char] = {
+  def generate(size : Int) : Array[String] = {
     val maxIndex = size - 1
-    val minePanel = (0 to maxIndex).map(a => ' ').toArray
-    randomLocations(10).foreach(l => minePanel(l) = '*')
+    val minePanel = (0 to maxIndex).map(a => " ").toArray
+    randomLocations(10).foreach(l => minePanel(l) = "*")
     minePanel
   }
 
-  def generate2D(dimension: Int) : Array[Array[Char]] = {
+  def generate2D(dimension: Int) : Array[Array[String]] = {
     val panel1D = generate(dimension * dimension)
 
-    def loop(formedList: List[List[Char]], list : List[Char]): List[List[Char]] = list match {
+    def loop(formedList: List[List[String]], list : List[String]): List[List[String]] = list match {
       case Nil => formedList
       case _ => loop(formedList :+ list.take(dimension), list.drop(dimension))
     }
@@ -52,12 +56,12 @@ object Panel extends App {
     array2D.map(row => {
       row.map({element =>
         element.value match {
-          case '*' => Cell('*', element.rowIndex, element.colIndex)
+          case "*" => Cell("*", element.rowIndex, element.colIndex)
           case _ =>
             val count = adjacentMines(array2D, element)
             count match {
-              case 0 => Cell(' ', element.rowIndex, element.colIndex)
-              case _ => Cell(count.toString.charAt(0), element.rowIndex, element.colIndex)
+              case 0 => Cell(" ", element.rowIndex, element.colIndex)
+              case _ => Cell(count.toString, element.rowIndex, element.colIndex)
             }
         }
       })
@@ -68,7 +72,7 @@ object Panel extends App {
     util.Random.shuffle(0 to 80).toArray.take(n)
   }
 
-  def adjacentGrid(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int) : List[Char] = {
+  def adjacentGrid(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int) : List[String] = {
     val rows = arr.length
     val columns = arr(0).length
 
@@ -79,7 +83,7 @@ object Panel extends App {
 
     (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
       val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
-      if(validElement) arr(row)(column).value else ' '
+      if(validElement) arr(row)(column).value else " "
     })).toList
   }
 
@@ -88,7 +92,7 @@ object Panel extends App {
     l map isMine sum
   }
 
-  def isMine(s: Char): Int = {
-    if (s == '*') 1 else 0
+  def isMine(s: String): Int = {
+    if (s == "*") 1 else 0
   }
 }
