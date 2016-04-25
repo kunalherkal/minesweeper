@@ -19,8 +19,10 @@ class HomeController @Inject() extends Controller {
    * a path of `/`.
    */
   def index = Action {
-    val grid = Panel(9)
-    Ok(views.html.index("Your new application is ready."))
+    val grid: Panel = Panel(9)
+    println(grid)
+    Ok(views.html.index(grid.toString))
+    //Ok(views.html.index("Your new application is ready."))
   }
 
 }

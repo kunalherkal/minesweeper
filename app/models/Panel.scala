@@ -5,6 +5,10 @@ package models
   */
 case class Panel(dimension: Int, grid: Array[Array[Cell]], status: Status = InProgress) {
   require(grid.size == dimension)
+
+  override def toString: String = {
+    grid.flatMap(row => row.map(cell => cell.toString)).toSeq.toString
+  }
 }
 
 object Panel extends App {
@@ -23,7 +27,7 @@ object Panel extends App {
   def generate(size : Int) : Array[Char] = {
     val maxIndex = size - 1
     val minePanel = (0 to maxIndex).map(a => emptySpace).toArray
-    randomLocations(10).foreach(l => minePanel(l) = mine)
+    randomLocations(10).foreach(l => minePanel(l) = '*')
     minePanel
   }
 
