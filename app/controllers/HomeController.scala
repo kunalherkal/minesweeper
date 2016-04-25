@@ -1,16 +1,17 @@
 package controllers
 
 import javax.inject._
-import models.{PanelSubmit, Panel}
+import models.PanelSubmit
 import play.api.mvc._
 import play.api.libs.json._
+import services.PanelService
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
 @Singleton
-class HomeController @Inject() extends Controller {
+class HomeController @Inject()(panelService: PanelService) extends Controller {
 
   /**
    * Create an Action to render an HTML page with a welcome message.
@@ -24,7 +25,7 @@ class HomeController @Inject() extends Controller {
   }
 
   def getPanel = Action {
-    val panel: Panel = Panel(9)
+    val panel = panelService.newPanel(9)
     val panelJson: JsValue = Json.toJson(panel)
     println(panelJson)
     Ok(panelJson)
@@ -36,9 +37,12 @@ class HomeController @Inject() extends Controller {
       errors => {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toJson(errors)))
       },
-      panel => {
-        println("Panel received: " + panel)
-        Ok(Json.obj("status" ->"OK", "message" -> ("Submitted Panel '" + panel + "' saved.") ))
+      panelSubmit => {
+        println("Panel received: " + panelSubmit)
+        val panel = panelService.validate(panelSubmit)
+        val panelJson = Json.toJson(panel)
+        println("Panel sent: " + panelJson)
+        Ok(panelJson)
       }
     )
   }

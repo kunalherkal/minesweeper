@@ -9,6 +9,31 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
 
   require(grid.size == dimension)
 
+  def solve(clickedRow:Int, clickedCol: Int): Panel = {
+    val clickedCell = grid(clickedRow)(clickedCol)
+    clickedCell match {
+      case Cell("*", _, _, _) => mineClicked()
+      case Cell(" ", _, _, _) => Panel(dimension, grid, "InProgress")
+      case Cell(_, _, _, _) => Panel(dimension, grid, "In Progress")
+      case _ => throw new IllegalArgumentException("Unexpected input")
+    }
+  }
+
+  def mineClicked() : Panel = {
+    val newGrid = grid.map(row => row.map(cell => {
+      Cell(cell.value, cell.rowIndex, cell.colIndex, false)
+    }))
+    Panel(dimension, newGrid, "Failed")
+  }
+
+  def emptyClicked() : Panel = {
+    ???
+  }
+
+  def numberClicked() : Panel = {
+    ???
+  }
+
   override def toString: String = {
     val arr = grid.flatMap(row => row.map(cell => cell.toString)).toSeq
     "Grid: \n" + arr.toString.drop(12) + "\nDimension: " + dimension //+ "\nStatus: " + status
