@@ -3,8 +3,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
+
 GET     /                           controllers.HomeController.index
-GET     /panel                      controllers.HomeController.getPanel
+GET     /panel/get                  controllers.HomeController.getPanel
+POST    /panel/submit               controllers.HomeController.submitPanel
+
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code

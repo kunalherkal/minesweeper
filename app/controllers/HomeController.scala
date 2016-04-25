@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import models.Panel
+import models.{PanelSubmit, Panel}
 import play.api.mvc._
 import play.api.libs.json._
 
@@ -29,5 +29,19 @@ class HomeController @Inject() extends Controller {
     println(panelJson)
     Ok(panelJson)
   }
+
+  def submitPanel = Action(BodyParsers.parse.json) { request =>
+    val panelBody = request.body.validate[PanelSubmit]
+    panelBody.fold(
+      errors => {
+        BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toJson(errors)))
+      },
+      panel => {
+        println("Panel received: " + panel)
+        Ok(Json.obj("status" ->"OK", "message" -> ("Submitted Panel '" + panel + "' saved.") ))
+      }
+    )
+  }
+
 
 }
