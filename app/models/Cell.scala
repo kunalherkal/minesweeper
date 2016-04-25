@@ -10,5 +10,5 @@ case class Cell(value : String, rowIndex: Int, colIndex: Int, hidden : Boolean =
 }
 
 object Cell {
-  implicit val userFormat = Json.format[Cell]
+  implicit val cellFormat = Json.format[Cell]
 }

@@ -16,7 +16,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
 }
 
 object Panel {
-  implicit val userFormat = Json.format[Panel]
+  implicit val panelFormat = Json.format[Panel]
 
   def apply(dimension : Int): Panel = {
     apply(dimension, Panel.newGrid(dimension))
