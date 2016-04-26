@@ -104,6 +104,32 @@ class PanelTest extends FunSpec with Matchers {
       panelString shouldBe expectedString
     }
   }
+
+  describe("Method isComplete") {
+
+    it("should return false") {
+      val grid = List(
+        List(Cell("1", 0, 0), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2)),
+        List(Cell("2", 1, 0), Cell("3", 1, 1), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell("2", 2, 1), Cell("1", 2, 2)))
+
+      val panel = Panel(3, grid)
+
+      panel.isComplete shouldBe false
+    }
+
+    it("should return true") {
+      val grid = List(
+        List(Cell("1", 0, 0, hidden = false), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2, hidden = false)),
+        List(Cell("2", 1, 0, hidden = false), Cell("3", 1, 1, hidden = false), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell("2", 2, 1, hidden = false), Cell("1", 2, 2, hidden = false)))
+
+      val panel = Panel(3, grid)
+
+      panel.isComplete shouldBe true
+
+    }
+   }
 }
 
 

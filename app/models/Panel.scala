@@ -33,11 +33,10 @@ case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelS
       case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
       case head :: tail if head.value == Cell.EMPTY =>
         val adjCells = Panel.adjacentCells(grid, head.rowIndex, head.colIndex, 1)
-        val newCells = adjCells.map(c => if(!formedList.contains(c)) c else Cell.INVALID_CELL)
+        val newCells = adjCells.map(cell => if(!formedList.contains(cell)) cell else Cell.INVALID_CELL)
         val validCells = newCells.filter(_ != Cell.INVALID_CELL)
         loop(tail ++ validCells, formedList ++ validCells)
     }
-
 
     val exposedCells = loop(List(clickedCell), List(clickedCell))
 
@@ -46,7 +45,8 @@ case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelS
       else cell
     }))
 
-    Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
+    val panel = Panel(dimension, newGrid)
+    if(panel.isComplete) Panel(dimension, newGrid, PanelStatus.SUCCESS) else panel
   }
 
   private def numberClicked(clickedCell : Cell) : Panel = {
@@ -54,7 +54,14 @@ case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelS
         case `clickedCell` => clickedCell.exposed
         case cell => cell
       }))
-    Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
+
+    val panel = Panel(dimension, newGrid)
+    if(panel.isComplete) Panel(dimension, newGrid, PanelStatus.SUCCESS) else panel
+  }
+
+  def isComplete : Boolean = {
+    val oneDimCellsWithoutMines = grid.flatten.filter(cell => cell.value != Cell.MINE)
+    oneDimCellsWithoutMines.forall(cell => !cell.hidden)
   }
 
   override def toString: String = {
