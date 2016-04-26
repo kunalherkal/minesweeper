@@ -5,6 +5,8 @@ import models.PanelSubmit
 import play.api.mvc._
 import play.api.libs.json._
 import services.PanelService
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -24,11 +26,13 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def getPanel = Action {
+  def getPanel = Action.async {
     val panel = panelService.newPanel(9)
-    val panelJson: JsValue = Json.toJson(panel)
-    println(panelJson)
-    Ok(panelJson)
+    val futurePanel = Future(panel)
+    futurePanel.map { result =>
+      val panelJson = Json.toJson(result)
+      Ok(panelJson)
+    }
   }
 
   def submitPanel = Action(BodyParsers.parse.json) { request =>
