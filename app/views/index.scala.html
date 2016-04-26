@@ -25,6 +25,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+        	var current_panel;
 			var isSetTable = false;
 			$('#generate_panel').click(function(){
 				if(!isSetTable){				
@@ -34,36 +35,54 @@
 				    	dataType: "json"
 				  	}).success(function( result ) {
 					 	console.log(result);
-
-							var theTable = "";
-							  for(var j = 0;j < result.dimension; j++){
-							      theTable += '<tr>';
-							      for(var k = 0; k < result.dimension; k++){  
-							      	id = j + '_' + k;
-							      	cell = result.grid.cells[j][k]; 
-							      	if (cell.hidden)    
-							        	theTable += '<td><button id = '+ id +' class = "panel_cell"></button></td>';
-							        else
-							        	theTable += '<td><button id = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
-							      }
-							      theTable += '</tr>';
-							  }
-						   	
-						   	$('#minesweeper_table').append(theTable);	
-						   	isSetTable = true;
+					 	current_panel = result;
+						generate_grid(result)
+						isSetTable = true;
 				  	});
 			  	} 				
 			});
 		
 			$(document).on('click', '.panel_cell', function() {
 				if(!$(this).hasClass('visible')){
-					console.log($(this).attr('id'))
+					current_cell = $(this).attr('id').split('_'); 
+					var submit_json = {};
+					submit_json.clickedRowIndex = current_cell[0];
+					submit_json.clickedColIndex = current_cell[1];
+					submit_json.panel = current_panel;
+					console.log(JSON.stringify(submit_json));
+
+					$.ajax({
+					    headers: { 
+					        'Content-Type': 'application/json' 
+					    },					    	
+				    	type: "POST",			    	
+				    	url: '/panel/submit',
+				    	dataType: "application/json",
+				    	data: JSON.stringify(submit_json)
+				  	}).success(function( result ) {
+					 	console.log(result);
+				  	});						
 
 				}
-			});        	
-
+			});
         });
+
+	function generate_grid(resultJson) {
+		var theTable = "";
+		  for(var j = 0;j < resultJson.dimension; j++){
+		      theTable += '<tr>';
+		      for(var k = 0; k < resultJson.dimension; k++){  
+		      	id = j + '_' + k;
+		      	cell = resultJson.grid.cells[j][k]; 
+		      	if (cell.hidden)    
+		        	theTable += '<td><button id = '+ id +' class = "panel_cell"></button></td>';
+		        else
+		        	theTable += '<td><button id = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
+		      }
+		      theTable += '</tr>';
+		  }
+	   	
+	   	$('#minesweeper_table').append(theTable);		
+	}
     </script>
-
-
 }
