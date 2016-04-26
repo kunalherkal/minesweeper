@@ -40,7 +40,7 @@
 							      theTable += '<tr>';
 							      for(var k = 0; k < result.dimension; k++){  
 							      	id = j + '_' + k;
-							      	cell = result.grid[j][k]; 
+							      	cell = result.grid.cells[j][k]; 
 							      	if (cell.hidden)    
 							        	theTable += '<td><button id = '+ id +' class = "panel_cell"></button></td>';
 							        else
@@ -58,7 +58,7 @@
 			$(document).on('click', '.panel_cell', function() {
 				if(!$(this).hasClass('visible')){
 					console.log($(this).attr('id'))
-					
+
 				}
 			});        	
 
