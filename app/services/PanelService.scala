@@ -8,7 +8,10 @@ import models.{PanelSubmit, Panel}
 class PanelService {
 
   def process(panelSubmit: PanelSubmit): Panel = {
-    panelSubmit.panel.solve(panelSubmit.clickedRowIndex, panelSubmit.clickedColIndex)
+    val clickedRow = panelSubmit.clickedRowIndex
+    val clickedCol = panelSubmit.clickedColIndex
+    val panel = panelSubmit.panel
+    panel.processClick(clickedRow, clickedCol)
   }
 
   def newPanel(dimension: Int): Panel = {

@@ -17,7 +17,7 @@ class PanelTest extends FunSpec with Matchers {
         List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
         List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 1, 1))
+      val count = Grid.adjacentMineCount(grid, Cell(Cell.EMPTY, 1, 1))
 
       count shouldBe 8
     }
@@ -28,7 +28,7 @@ class PanelTest extends FunSpec with Matchers {
         List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
         List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 0, 0))
+      val count = Grid.adjacentMineCount(grid, Cell(Cell.EMPTY, 0, 0))
       count shouldBe 2
     }
 
@@ -38,7 +38,7 @@ class PanelTest extends FunSpec with Matchers {
         List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.EMPTY, 1, 2)),
         List(Cell(Cell.EMPTY, 2, 0), Cell(Cell.EMPTY, 2, 1), Cell(Cell.EMPTY, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 1, 1))
+      val count = Grid.adjacentMineCount(grid, Cell(Cell.EMPTY, 1, 1))
       count shouldBe 0
     }
   }
