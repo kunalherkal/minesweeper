@@ -7,8 +7,13 @@ import play.api.libs.json.Json
   */
 case class Cell(value : String, rowIndex: Int, colIndex: Int, hidden : Boolean = true) {
 
+  def exposed = Cell(value, rowIndex, colIndex, hidden = false)
+
 }
 
 object Cell {
   implicit val cellFormat = Json.format[Cell]
+  val MINE: String = "*"
+  val EMPTY: String = " "
+  val INVALID_CELL = Cell("K", 999, 999, hidden = true)
 }

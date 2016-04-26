@@ -6,57 +6,9 @@ import org.scalatest.{Matchers, FunSpec}
   * Created by khn3193 on 4/22/16.
   */
 class PanelTest extends FunSpec with Matchers {
-
-  describe("Method adjacentMines") {
-    it("should return 8 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell("*", 0, 0)
-      grid(0)(1) = Cell("*", 0, 1)
-      grid(0)(2) = Cell("*", 0, 2)
-      grid(1)(0) = Cell("*", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell("*", 1, 2)
-      grid(2)(0) = Cell("*", 2, 0)
-      grid(2)(1) = Cell("*", 2, 1)
-      grid(2)(2) = Cell("*", 2, 2)
-
-      val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
-      assert(count == 8)
-    }
-
-    it("should return 3 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell("*", 0, 1)
-      grid(0)(2) = Cell("*", 0, 2)
-      grid(1)(0) = Cell("*", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell("*", 1, 2)
-      grid(2)(0) = Cell("*", 2, 0)
-      grid(2)(1) = Cell("*", 2, 1)
-      grid(2)(2) = Cell("*", 2, 2)
-
-      val count = Panel.adjacentMines(grid, Cell(" ", 0, 0))
-      assert(count == 2)
-    }
-
-    it("should return 0 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(0)(2) = Cell(" ", 0, 2)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell(" ", 1, 2)
-      grid(2)(0) = Cell(" ", 2, 0)
-      grid(2)(1) = Cell(" ", 2, 1)
-      grid(2)(2) = Cell(" ", 2, 2)
-
-      val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
-      assert(count == 0)
-
-    }
-  }
+  val cells2dAllCellEmpty = List(
+    List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.EMPTY, 0, 1)),
+    List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1)))
 
   describe("Panel") {
 
@@ -64,67 +16,85 @@ class PanelTest extends FunSpec with Matchers {
 
       val panel = Panel(9)
 
-      panel.grid should not be empty
-      assert(panel.grid.size == 9)
+      panel.grid.dimension shouldBe 9
 
-      panel.grid.foreach(row => {
-        assert(row.size == 9)
+      panel.grid.getCells.foreach(row => {
+        row.length shouldBe 9
       })
 
-      assert(panel.dimension == 9)
-      assert(panel.status == "InProgress")
+      panel.dimension shouldBe 9
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
     it("should create panel of dimension 20x20") {
 
       val panel = Panel(20)
 
-      panel.grid should not be empty
-      assert(panel.grid.size == 20)
+      panel.grid.dimension shouldBe 20
 
-      panel.grid.foreach(row => {
-        assert(row.size == 20)
+      panel.grid.getCells.foreach(row => {
+        row.length shouldBe 20
       })
 
-      assert(panel.dimension == 20)
-      assert(panel.status == "InProgress")
+      panel.dimension shouldBe 20
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
     it("should create a panel with give grid") {
-      val grid = Array.ofDim[Cell](2, 2)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
+      val panel = Panel(Grid(cells2dAllCellEmpty))
 
-      val panel = Panel(grid)
+      panel.grid.dimension shouldBe 2
 
-      panel.grid should not be empty
-      assert(panel.grid.size == 2)
-
-      panel.grid.foreach(row => {
-        assert(row.size == 2)
+      panel.grid.getCells.foreach(row => {
+        row.length shouldBe 2
       })
 
-      assert(panel.dimension == 2)
-      assert(panel.status == "InProgress")
+      panel.dimension shouldBe 2
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
-    it("should throw an exception") {
-      val grid = Array.ofDim[Cell](2, 2)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-
+    it("should throw an exception when dimension mismatches the grid size") {
       intercept[IllegalArgumentException] {
-        val panel = Panel(3, grid)
+        Panel(3, Grid(cells2dAllCellEmpty))
       }
-
     }
   }
 
+    describe("Method panel.toString()") {
+    it("should give proper String formatted panel") {
+      val panel = Panel(2, Grid(cells2dAllCellEmpty))
+      val panelString = panel.toString
+      val expectedString = "Panel: [Grid: List(Cell( ,0,0,true), Cell( ,0,1,true), Cell( ,1,0,true), Cell( ,1,1,true))," +
+        " Dimension: 2, Status: IN_PROGRESS]"
 
+      panelString shouldBe expectedString
+    }
+  }
+
+  describe("Method panel.isComplete") {
+
+    it("should return false when panel isn't complete") {
+      val cells = List(
+        List(Cell("1", 0, 0), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2)),
+        List(Cell("2", 1, 0), Cell("3", 1, 1), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell("2", 2, 1), Cell("1", 2, 2)))
+
+      val panel = Panel(3, Grid(cells))
+
+      panel.isComplete shouldBe false
+    }
+
+    it("should return true when panel is complete") {
+      val cells = List(
+        List(Cell("1", 0, 0, hidden = false), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2, hidden = false)),
+        List(Cell("2", 1, 0, hidden = false), Cell("3", 1, 1, hidden = false), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell("2", 2, 1, hidden = false), Cell("1", 2, 2, hidden = false)))
+
+      val panel = Panel(3, Grid(cells))
+
+      panel.isComplete shouldBe true
+    }
+   }
 }
 
 

@@ -26,9 +26,7 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
 
   def getPanel = Action {
     val panel = panelService.newPanel(9)
-    val panelJson: JsValue = Json.toJson(panel)
-    println(panelJson)
-    Ok(panelJson)
+    Ok(Json.toJson(panel))
   }
 
   def submitPanel = Action(BodyParsers.parse.json) { request =>
