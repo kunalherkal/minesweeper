@@ -80,7 +80,7 @@ object Grid {
   implicit val panelFormat = Json.format[Grid]
   val dimensionToMines = Map(81 -> 10, 256 -> 40)
 
-  def create(dimension: Int) : Grid = {
+  def apply(dimension: Int) : Grid = {
     val twoDimCellValues = generateTwoDimCellValues(dimension).map(_.zipWithIndex).zipWithIndex
 
     val gridWithoutNumberCells = twoDimCellValues.map(row => {

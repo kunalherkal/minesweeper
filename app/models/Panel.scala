@@ -50,7 +50,7 @@ object Panel {
   implicit val panelFormat = Json.format[Panel]
 
   def apply(dimension : Int): Panel = {
-    apply(dimension, Grid.create(dimension))
+    apply(dimension, Grid(dimension))
   }
 
   def apply(grid: Grid): Panel = {
