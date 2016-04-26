@@ -112,10 +112,12 @@ object Panel {
 
   private def generate(size : Int) : Array[String] = {
     val maxIndex = size - 1
-    val minePanel = (0 to maxIndex).map(a => Cell.EMPTY).toArray
     val mineCount = dimensionToMines.getOrElse(size, 0)
-    randomLocations(mineCount).foreach(l => minePanel(l) = Cell.MINE)
-    minePanel
+    val rndLocations = randomLocations(mineCount)
+
+    (0 to maxIndex).map(a => {
+     if(rndLocations.contains(a)) Cell.MINE else Cell.EMPTY
+    }).toArray
   }
 
   private def randomLocations(n : Int): Array[Int] = {
