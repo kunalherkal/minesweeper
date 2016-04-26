@@ -46,10 +46,9 @@
 				if(!$(this).hasClass('visible')){
 					current_cell = $(this).attr('id').split('_'); 
 					var submit_json = {};
-					submit_json.clickedRowIndex = current_cell[0];
-					submit_json.clickedColIndex = current_cell[1];
+					submit_json.clickedRowIndex = parseInt(current_cell[0]);
+					submit_json.clickedColIndex = parseInt(current_cell[1]);
 					submit_json.panel = current_panel;
-					console.log(JSON.stringify(submit_json));
 
 					$.ajax({
 					    headers: { 
@@ -57,10 +56,10 @@
 					    },					    	
 				    	type: "POST",			    	
 				    	url: '/panel/submit',
-				    	dataType: "application/json",
+				    	dataType: "json",
 				    	data: JSON.stringify(submit_json)
 				  	}).success(function( result ) {
-					 	console.log(result);
+					 	generate_grid(result);
 				  	});						
 
 				}
@@ -81,7 +80,7 @@
 		      }
 		      theTable += '</tr>';
 		  }
-	   	
+	   	$('#minesweeper_table').empty();
 	   	$('#minesweeper_table').append(theTable);		
 	}
     </script>
