@@ -26,13 +26,9 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def getPanel = Action.async {
+  def getPanel = Action {
     val panel = panelService.newPanel(9)
-    val futurePanel = Future(panel)
-    futurePanel.map { result =>
-      val panelJson = Json.toJson(result)
-      Ok(panelJson)
-    }
+    Ok(Json.toJson(panel))
   }
 
   def submitPanel = Action(BodyParsers.parse.json) { request =>
