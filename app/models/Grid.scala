@@ -25,7 +25,7 @@ case class Grid(private val cells : List[List[Cell]]) {
       case Nil => formedList
       case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
       case head :: tail if head.value == Cell.EMPTY =>
-        val adjCells = Grid.adjacentCells(this, head.rowIndex, head.colIndex, 1)
+        val adjCells = adjacentCells(head.rowIndex, head.colIndex, 1)
         val newCells = adjCells.map(cell => if(!formedList.contains(cell)) cell else Cell.INVALID_CELL)
         val validCells = newCells.filter(_ != Cell.INVALID_CELL)
         loop(tail ++ validCells, formedList ++ validCells)
@@ -57,6 +57,23 @@ case class Grid(private val cells : List[List[Cell]]) {
   def flattenedCells = cells.flatten
 
   def getCells = cells
+
+  def adjacentCells(currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
+    val rows = cells.length
+    val columns = cells.head.length
+
+    val startRowIndex = currentRowIndex - level
+    val endRowIndex = currentRowIndex + level
+    val startColumnIndex = currentColumnIndex - level
+    val endColumnIndex = currentColumnIndex + level
+
+    (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
+      val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
+      if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
+        cells(row)(column)
+      } else Cell.INVALID_CELL
+    })).toList
+  }
 
   override def toString: String = {
     cells.flatMap(row => row.map(cell => cell.toString)).toSeq.toString()
@@ -119,27 +136,9 @@ object Grid {
   }
 
   def adjacentMineCount(grid: Grid, element: Cell): Int = {
-    val adjCells = adjacentCells(grid, element.rowIndex, element.colIndex, 1)
+    val adjCells = grid.adjacentCells(element.rowIndex, element.colIndex, 1)
     val adjCellValues = adjacentCellValues(adjCells)
     adjCellValues.map(isMine).sum
-  }
-
-  def adjacentCells(grid: Grid, currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
-    val cells = grid.cells
-    val rows = cells.length
-    val columns = cells.head.length
-
-    val startRowIndex = currentRowIndex - level
-    val endRowIndex = currentRowIndex + level
-    val startColumnIndex = currentColumnIndex - level
-    val endColumnIndex = currentColumnIndex + level
-
-    (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
-      val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
-      if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
-        cells(row)(column)
-      } else Cell.INVALID_CELL
-    })).toList
   }
 
   private def adjacentCellValues(list: List[Cell]) : List[String] = {
