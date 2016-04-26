@@ -4,12 +4,12 @@ import play.api.libs.json.Json
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
-case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelStatus.IN_PROGRESS) {
+case class Panel(dimension: Int, grid: Grid, status: String = PanelStatus.IN_PROGRESS) {
 
   require(grid.length == dimension)
 
   def processClick(clickedRow:Int, clickedCol: Int): Panel = {
-    val clickedCell = grid(clickedRow)(clickedCol)
+    val clickedCell = grid.cell(clickedRow, clickedCol)
 
     clickedCell match {
       case Cell(Cell.MINE, _, _, _) => mineClicked
@@ -19,9 +19,7 @@ case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelS
   }
 
   private def mineClicked: Panel = {
-    val newGrid = grid.map(row => row.map(cell => {
-      if(cell.value == Cell.MINE) cell.exposed else cell
-    }))
+    val newGrid = grid.afterMineClicked
     Panel(dimension, newGrid, PanelStatus.FAILED)
   }
 
@@ -37,35 +35,27 @@ case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelS
         loop(tail ++ validCells, formedList ++ validCells)
     }
 
-    val exposedCells = loop(List(clickedCell), List(clickedCell))
+    val exposedCells: List[Cell] = loop(List(clickedCell), List(clickedCell))
 
-    val newGrid = grid.map(row => row.map(cell => {
-      if(exposedCells.contains(cell)) cell.exposed
-      else cell
-    }))
+    val newGrid = grid.afterEmptyClicked(exposedCells)
 
     val panel = Panel(dimension, newGrid)
     if(panel.isComplete) Panel(dimension, newGrid, PanelStatus.SUCCESS) else panel
   }
 
   private def numberClicked(clickedCell : Cell) : Panel = {
-    val newGrid = grid.map(row => row.map({
-        case `clickedCell` => clickedCell.exposed
-        case cell => cell
-      }))
+    val newGrid = grid.afterNumberClicked(clickedCell)
 
     val panel = Panel(dimension, newGrid)
     if(panel.isComplete) Panel(dimension, newGrid, PanelStatus.SUCCESS) else panel
   }
 
   def isComplete : Boolean = {
-    val oneDimCellsWithoutMines = grid.flatten.filter(cell => cell.value != Cell.MINE)
-    oneDimCellsWithoutMines.forall(cell => !cell.hidden)
+      grid.oneDimCellsWithoutMines.forall(cell => !cell.hidden)
   }
 
   override def toString: String = {
-    val oneDimGrid = grid.flatMap(row => row.map(cell => cell.toString)).toSeq
-    "Panel: [" + "Grid: " + oneDimGrid.toString + ", Dimension: " + dimension + ", Status: " + status + "]"
+    "Panel: [" + "Grid: " + grid.toString + ", Dimension: " + dimension + ", Status: " + status + "]"
   }
 }
 
@@ -76,7 +66,7 @@ object Panel {
     apply(dimension, Grid.create(dimension))
   }
 
-  def apply(grid: List[List[Cell]]): Panel = {
+  def apply(grid: Grid): Panel = {
     apply(grid.length, grid)
   }
 }

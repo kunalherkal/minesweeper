@@ -1,6 +1,6 @@
 package services
 
-import models.{PanelStatus, Panel, PanelSubmit, Cell}
+import models._
 import org.scalatest.{Matchers, FunSpec}
 
 /**
@@ -9,7 +9,7 @@ import org.scalatest.{Matchers, FunSpec}
 class PanelServiceTest extends FunSpec with Matchers {
 
   describe("method process") {
-    val grid = List(
+    val cells = List(
       List(Cell(" ",0,0,hidden = true), Cell(" ",0,1,hidden = true), Cell(" ",0,2,hidden = true), Cell("1",0,3,hidden = true), Cell("1",0,4,hidden = true), Cell("1",0,5,hidden = true), Cell(" ",0,6,hidden = true), Cell(" ",0,7,hidden = true), Cell(" ",0,8,hidden = true)),
       List(Cell("1",1,0,hidden = true), Cell("1",1,1,hidden = true), Cell("2",1,2,hidden = true), Cell("2",1,3,hidden = true), Cell("*",1,4,hidden = true), Cell("1",1,5,hidden = true), Cell(" ",1,6,hidden = true), Cell(" ",1,7,hidden = true), Cell(" ",1,8,hidden = true)),
       List(Cell("1",2,0,hidden = true), Cell("*",2,1,hidden = true), Cell("2",2,2,hidden = true), Cell("*",2,3,hidden = true), Cell("3",2,4,hidden = true), Cell("2",2,5,hidden = true), Cell("1",2,6,hidden = true), Cell(" ",2,7,hidden = true), Cell(" ",2,8,hidden = true)),
@@ -20,7 +20,7 @@ class PanelServiceTest extends FunSpec with Matchers {
       List(Cell("1",7,0,hidden = true), Cell("*",7,1,hidden = true), Cell("1",7,2,hidden = true), Cell(" ",7,3,hidden = true), Cell(" ",7,4,hidden = true), Cell("1",7,5,hidden = true), Cell("*",7,6,hidden = true), Cell("2",7,7,hidden = true), Cell("1",7,8,hidden = true)),
       List(Cell("1",8,0,hidden = true), Cell("1",8,1,hidden = true), Cell("1",8,2,hidden = true), Cell(" ",8,3,hidden = true), Cell(" ",8,4,hidden = true), Cell("1",8,5,hidden = true), Cell("1",8,6,hidden = true), Cell("1",8,7,hidden = true), Cell(" ",8,8,hidden = true)))
 
-    val panel = Panel(9, grid)
+    val panel = Panel(9, Grid(cells))
     it("should return panel with state as failed") {
       val panelService = new PanelService
       val panelSubmit = PanelSubmit(panel, 4, 0)
@@ -36,7 +36,7 @@ class PanelServiceTest extends FunSpec with Matchers {
 
 
       outputPanel.status shouldBe PanelStatus.IN_PROGRESS
-      outputPanel.grid(1)(0).hidden shouldBe false
+      outputPanel.grid.cell(1, 0).hidden shouldBe false
     }
 
     it("should return panel with clicked and adjacent cells as hidden false for 0,0") {
@@ -44,17 +44,17 @@ class PanelServiceTest extends FunSpec with Matchers {
       val panelSubmit = PanelSubmit(panel, 0, 0)
       val outputPanel = panelService.process(panelSubmit)
 
-      val exposedCells = List(outputPanel.grid(0)(0),
-          outputPanel.grid(0)(1),
-          outputPanel.grid(0)(2),
-          outputPanel.grid(0)(3),
-          outputPanel.grid(1)(0),
-          outputPanel.grid(1)(1),
-          outputPanel.grid(1)(2),
-          outputPanel.grid(1)(3))
+      val exposedCells = List(outputPanel.grid.cell(0, 0),
+          outputPanel.grid.cell(0, 1),
+          outputPanel.grid.cell(0, 2),
+          outputPanel.grid.cell(0, 3),
+          outputPanel.grid.cell(1, 0),
+          outputPanel.grid.cell(1, 1),
+          outputPanel.grid.cell(1, 2),
+          outputPanel.grid.cell(1, 3))
 
       outputPanel.status shouldBe PanelStatus.IN_PROGRESS
-      outputPanel.grid.flatten.foreach(cell => {
+      outputPanel.grid.cells.flatten.foreach(cell => {
         if(exposedCells.contains(cell)) cell.hidden shouldBe false else cell.hidden shouldBe true
       })
     }
@@ -63,34 +63,34 @@ class PanelServiceTest extends FunSpec with Matchers {
       val panelService = new PanelService
       val panelSubmit = PanelSubmit(panel, 4, 2)
       val outputPanel = panelService.process(panelSubmit)
-      val exposedCells = List(outputPanel.grid(3)(1),
-        outputPanel.grid(3)(2),
-        outputPanel.grid(3)(3),
-        outputPanel.grid(3)(4),
-        outputPanel.grid(4)(1),
-        outputPanel.grid(4)(2),
-        outputPanel.grid(4)(3),
-        outputPanel.grid(4)(4),
-        outputPanel.grid(5)(1),
-        outputPanel.grid(5)(2),
-        outputPanel.grid(5)(3),
-        outputPanel.grid(5)(4),
-        outputPanel.grid(6)(1),
-        outputPanel.grid(6)(2),
-        outputPanel.grid(6)(3),
-        outputPanel.grid(6)(4),
-        outputPanel.grid(6)(5),
-        outputPanel.grid(7)(2),
-        outputPanel.grid(7)(3),
-        outputPanel.grid(7)(4),
-        outputPanel.grid(7)(5),
-        outputPanel.grid(8)(2),
-        outputPanel.grid(8)(3),
-        outputPanel.grid(8)(4),
-        outputPanel.grid(8)(5))
+      val exposedCells = List(outputPanel.grid.cell(3, 1),
+        outputPanel.grid.cell(3, 2),
+        outputPanel.grid.cell(3, 3),
+        outputPanel.grid.cell(3, 4),
+        outputPanel.grid.cell(4, 1),
+        outputPanel.grid.cell(4, 2),
+        outputPanel.grid.cell(4, 3),
+        outputPanel.grid.cell(4, 4),
+        outputPanel.grid.cell(5, 1),
+        outputPanel.grid.cell(5, 2),
+        outputPanel.grid.cell(5, 3),
+        outputPanel.grid.cell(5, 4),
+        outputPanel.grid.cell(6, 1),
+        outputPanel.grid.cell(6, 2),
+        outputPanel.grid.cell(6, 3),
+        outputPanel.grid.cell(6, 4),
+        outputPanel.grid.cell(6, 5),
+        outputPanel.grid.cell(7, 2),
+        outputPanel.grid.cell(7, 3),
+        outputPanel.grid.cell(7, 4),
+        outputPanel.grid.cell(7, 5),
+        outputPanel.grid.cell(8, 2),
+        outputPanel.grid.cell(8, 3),
+        outputPanel.grid.cell(8, 4),
+        outputPanel.grid.cell(8, 5))
 
       outputPanel.status shouldBe PanelStatus.IN_PROGRESS
-      outputPanel.grid.flatten.foreach(cell => {
+      outputPanel.grid.cells.flatten.foreach(cell => {
         if(exposedCells.contains(cell)) cell.hidden shouldBe false else cell.hidden shouldBe true
       })
     }

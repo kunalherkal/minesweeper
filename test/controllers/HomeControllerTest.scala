@@ -48,7 +48,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
                         |   "clickedColIndex":0,
                         |   "panel":{
                         |      "dimension":9,
-                        |      "grid":[
+                        |      "grid":{"cells":[
                         |         [
                         |            {
                         |               "value":"2",
@@ -553,7 +553,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
                         |               "hidden":true
                         |            }
                         |         ]
-                        |      ],
+                        |      ]},
                         |      "status":"InProgress"
                         |   }
                         |}"""
