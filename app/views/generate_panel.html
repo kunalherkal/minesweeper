@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	
+</head>
+<body>
+	<button id="generate_panel">
+	Generate
+	</button>
+	
+	<div class = "minesweeper_section">
+		<table id = 'minesweeper_table' border = '1'></table>	
+	</div>
+</body>
+</html>
+
+
+<style type="text/css">
+	.minesweeper_section button {
+	  width: 20px;
+	  height: 20px;
+	}	
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){	
+
+	var json =	{  
+	   "clickedRowIndex":0,
+	   "clickedColIndex":0,
+	   "panel":{  
+	      "dimension":9,
+	      "grid":[  
+	         [  
+	            {  
+	               "value":"2",
+	               "rowIndex":0,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":0,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":0,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":0,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":0,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":0,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":0,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":0,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":0,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"*",
+	               "rowIndex":1,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":1,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":1,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":1,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":1,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":1,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":1,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":1,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":1,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"2",
+	               "rowIndex":2,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":2,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":2,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":2,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"1",
+	               "rowIndex":3,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":3,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":3,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":3,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"1",
+	               "rowIndex":4,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":4,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":4,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":4,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":4,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":4,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":4,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":4,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":4,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"1",
+	               "rowIndex":5,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":5,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":5,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":5,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":5,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":5,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":5,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":5,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":5,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"1",
+	               "rowIndex":6,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":6,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":6,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":6,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":6,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":6,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":6,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":6,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":6,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"*",
+	               "rowIndex":7,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":7,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":7,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":7,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":7,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":7,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":7,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":7,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":7,
+	               "colIndex":8,
+	               "hidden":true
+	            }
+	         ],
+	         [  
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":0,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":1,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":2,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"2",
+	               "rowIndex":8,
+	               "colIndex":3,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"*",
+	               "rowIndex":8,
+	               "colIndex":4,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":5,
+	               "hidden":true
+	            },
+	            {  
+	               "value":" ",
+	               "rowIndex":8,
+	               "colIndex":6,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":7,
+	               "hidden":true
+	            },
+	            {  
+	               "value":"1",
+	               "rowIndex":8,
+	               "colIndex":8,
+	               "hidden":false
+	            }
+	         ]
+	      ],
+	      "status":"InProgress"
+	   }
+	}
+
+	var isSetTable = false;
+	$('#generate_panel').click(function(){
+
+		if(!isSetTable){
+			var theTable = "";
+			  for(var j = 0;j < json.panel.dimension; j++){
+			      theTable += '<tr>';
+			      for(var k = 0; k < json.panel.dimension; k++){  
+			      	id = j + '_' + k;
+			      	cell = json.panel.grid[j][k]; 
+			      	if (cell.hidden)    
+			        	theTable += '<td><button id = '+ id +' class = "panel_cell"></button></td>';
+			        else
+			        	theTable += '<td><button id = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
+			      }
+			      theTable += '</tr>';
+			  }
+		   	
+		   	$('#minesweeper_table').append(theTable);	
+		   	isSetTable = true;
+		}
+	});
+	
+	$(document).on('click', '.panel_cell', function() {
+		if(!$(this).hasClass('visible'))
+			console.log($(this).attr('id'))
+	});
+
+});
+</script>
