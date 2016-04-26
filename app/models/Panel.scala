@@ -24,20 +24,7 @@ case class Panel(dimension: Int, grid: Grid, status: String = PanelStatus.IN_PRO
   }
 
   private def emptyClicked(clickedCell : Cell) : Panel = {
-
-    def loop(originalList: List[Cell], formedList: List[Cell]): List[Cell] = originalList match {
-      case Nil => formedList
-      case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
-      case head :: tail if head.value == Cell.EMPTY =>
-        val adjCells = Grid.adjacentCells(grid, head.rowIndex, head.colIndex, 1)
-        val newCells = adjCells.map(cell => if(!formedList.contains(cell)) cell else Cell.INVALID_CELL)
-        val validCells = newCells.filter(_ != Cell.INVALID_CELL)
-        loop(tail ++ validCells, formedList ++ validCells)
-    }
-
-    val exposedCells: List[Cell] = loop(List(clickedCell), List(clickedCell))
-
-    val newGrid = grid.afterEmptyClicked(exposedCells)
+    val newGrid = grid.afterEmptyClicked(clickedCell)
 
     val panel = Panel(dimension, newGrid)
     if(panel.isComplete) Panel(dimension, newGrid, PanelStatus.SUCCESS) else panel

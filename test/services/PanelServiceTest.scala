@@ -54,7 +54,7 @@ class PanelServiceTest extends FunSpec with Matchers {
           outputPanel.grid.cell(1, 3))
 
       outputPanel.status shouldBe PanelStatus.IN_PROGRESS
-      outputPanel.grid.cells.flatten.foreach(cell => {
+      outputPanel.grid.flattenedCells.foreach(cell => {
         if(exposedCells.contains(cell)) cell.hidden shouldBe false else cell.hidden shouldBe true
       })
     }
@@ -90,7 +90,7 @@ class PanelServiceTest extends FunSpec with Matchers {
         outputPanel.grid.cell(8, 5))
 
       outputPanel.status shouldBe PanelStatus.IN_PROGRESS
-      outputPanel.grid.cells.flatten.foreach(cell => {
+      outputPanel.grid.flattenedCells.foreach(cell => {
         if(exposedCells.contains(cell)) cell.hidden shouldBe false else cell.hidden shouldBe true
       })
     }

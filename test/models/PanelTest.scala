@@ -51,7 +51,7 @@ class PanelTest extends FunSpec with Matchers {
 
       panel.grid.length shouldBe 9
 
-      panel.grid.cells.foreach(row => {
+      panel.grid.getCells.foreach(row => {
         row.length shouldBe 9
       })
 
@@ -65,7 +65,7 @@ class PanelTest extends FunSpec with Matchers {
 
       panel.grid.length shouldBe 20
 
-      panel.grid.cells.foreach(row => {
+      panel.grid.getCells.foreach(row => {
         row.length shouldBe 20
       })
 
@@ -78,7 +78,7 @@ class PanelTest extends FunSpec with Matchers {
 
       panel.grid.length shouldBe 2
 
-      panel.grid.cells.foreach(row => {
+      panel.grid.getCells.foreach(row => {
         row.length shouldBe 2
       })
 

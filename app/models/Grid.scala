@@ -5,7 +5,7 @@ import play.api.libs.json.Json
 /**
   * Created by khn3193 on 4/26/16.
   */
-case class Grid(cells : List[List[Cell]]) {
+case class Grid(private val cells : List[List[Cell]]) {
 
   def cell(rowIndex: Int, colIndex: Int): Cell = cells(rowIndex)(colIndex)
 
@@ -19,7 +19,20 @@ case class Grid(cells : List[List[Cell]]) {
     Grid(newCells)
   }
 
-  def afterEmptyClicked(exposedCells : List[Cell]) = {
+  def afterEmptyClicked(clickedCell: Cell) = {
+
+    def loop(originalList: List[Cell], formedList: List[Cell]): List[Cell] = originalList match {
+      case Nil => formedList
+      case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
+      case head :: tail if head.value == Cell.EMPTY =>
+        val adjCells = Grid.adjacentCells(this, head.rowIndex, head.colIndex, 1)
+        val newCells = adjCells.map(cell => if(!formedList.contains(cell)) cell else Cell.INVALID_CELL)
+        val validCells = newCells.filter(_ != Cell.INVALID_CELL)
+        loop(tail ++ validCells, formedList ++ validCells)
+    }
+
+    val exposedCells = loop(List(clickedCell), List(clickedCell))
+
     val newCells = cells.map(row => row.map(cell => {
       if(exposedCells.contains(cell)) cell.exposed
       else cell
@@ -40,6 +53,10 @@ case class Grid(cells : List[List[Cell]]) {
   def oneDimCellsWithoutMines = {
     cells.flatten.filter(cell => cell.value != Cell.MINE)
   }
+
+  def flattenedCells = cells.flatten
+
+  def getCells = cells
 
   override def toString: String = {
     cells.flatMap(row => row.map(cell => cell.toString)).toSeq.toString()
