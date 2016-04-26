@@ -4,7 +4,7 @@ import play.api.libs.json.Json
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
-case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = PanelStatus.IN_PROGRESS) {
+case class Panel(dimension: Int, grid: List[List[Cell]], status: String = PanelStatus.IN_PROGRESS) {
 
   require(grid.length == dimension)
 
@@ -50,7 +50,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = Pane
   }
 
   private def numberClicked(clickedCell : Cell) : Panel = {
-    val newGrid: Array[Array[Cell]] = grid.map(row => row.map({
+    val newGrid = grid.map(row => row.map({
         case `clickedCell` => clickedCell.exposed
         case cell => cell
       }))
@@ -59,7 +59,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = Pane
 
   override def toString: String = {
     val arr = grid.flatMap(row => row.map(cell => cell.toString)).toSeq
-    "Panel: [" + "Grid: " + arr.toString.drop(12) + ", Dimension: " + dimension + ", Status: " + status + "]"
+    "Panel: [" + "Grid: " + arr.toString + ", Dimension: " + dimension + ", Status: " + status + "]"
   }
 }
 
@@ -71,25 +71,25 @@ object Panel {
     apply(dimension, Panel.newGrid(dimension))
   }
 
-  def apply(grid: Array[Array[Cell]]): Panel = {
+  def apply(grid: List[List[Cell]]): Panel = {
     apply(grid.length, grid)
   }
 
-  private def newGrid(dimension: Int) : Array[Array[Cell]] = {
-    val arr2 = generate2D(dimension).map(_.zipWithIndex).zipWithIndex
+  private def newGrid(dimension: Int) : List[List[Cell]] = {
+    val twoDimCellValues = generate2D(dimension).map(_.zipWithIndex).zipWithIndex
 
-    val array2D = arr2.map(row => {
+    val gridWithoutNumberCells = twoDimCellValues.map(row => {
       row._1.map(element => {
         Cell(element._1, row._2, element._2)
       })
     })
 
-    array2D.map(row => {
+    val finalGrid = gridWithoutNumberCells.map(row => {
       row.map({element =>
         element.value match {
           case Cell.MINE => Cell(Cell.MINE, element.rowIndex, element.colIndex)
           case _ =>
-            val count = adjacentMines(array2D, element)
+            val count = adjacentMines(gridWithoutNumberCells, element)
             count match {
               case 0 => Cell(Cell.EMPTY, element.rowIndex, element.colIndex)
               case _ => Cell(count.toString, element.rowIndex, element.colIndex)
@@ -97,42 +97,44 @@ object Panel {
         }
       })
     })
+
+    finalGrid
   }
 
-  private def generate2D(dimension: Int) : Array[Array[String]] = {
-    val panel1D = generate(dimension * dimension)
+  private def generate2D(dimension: Int) : List[List[String]] = {
+    val oneDimCellValues = generate(dimension * dimension)
 
     def loop[A](formedList: List[List[A]], list : List[A]): List[List[A]] = list match {
       case Nil => formedList
       case _ => loop(formedList :+ list.take(dimension), list.drop(dimension))
     }
 
-    loop(Nil, panel1D.toList).map(row => row.toArray).toArray
+    loop(Nil, oneDimCellValues)
   }
 
-  private def generate(size : Int) : Array[String] = {
+  private def generate(size : Int) : List[String] = {
     val maxIndex = size - 1
     val mineCount = dimensionToMines.getOrElse(size, 0)
     val rndLocations = randomLocations(mineCount)
 
     (0 to maxIndex).map(a => {
      if(rndLocations.contains(a)) Cell.MINE else Cell.EMPTY
-    }).toArray
+    }).toList
   }
 
-  private def randomLocations(n : Int): Array[Int] = {
-    util.Random.shuffle(0 to 80).toArray.take(n)
+  private def randomLocations(n : Int): List[Int] = {
+    util.Random.shuffle(0 to 80).toList.take(n)
   }
 
-  def adjacentMines(arr: Array[Array[Cell]], element: Cell): Int = {
-    val adjCells = adjacentCells(arr, element.rowIndex, element.colIndex, 1)
+  def adjacentMines(grid: List[List[Cell]], element: Cell): Int = {
+    val adjCells = adjacentCells(grid, element.rowIndex, element.colIndex, 1)
     val adjCellValues = adjacentCellValues(adjCells)
     adjCellValues.map(isMine).sum
   }
 
-  private def adjacentCells(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
-    val rows = arr.length
-    val columns = arr(0).length
+  private def adjacentCells(grid: List[List[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
+    val rows = grid.length
+    val columns = grid.head.length
 
     val startRowIndex = currentRowIndex - level
     val endRowIndex = currentRowIndex + level
@@ -142,7 +144,7 @@ object Panel {
     (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
       val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
         if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
-          arr(row)(column)
+          grid(row)(column)
         } else Cell.INVALID_CELL
     })).toList
   }

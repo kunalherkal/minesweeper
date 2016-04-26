@@ -6,54 +6,39 @@ import org.scalatest.{Matchers, FunSpec}
   * Created by khn3193 on 4/22/16.
   */
 class PanelTest extends FunSpec with Matchers {
+  val grid2dAllCellEmpty = List(
+    List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.EMPTY, 0, 1)),
+    List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1)))
 
   describe("Method adjacentMines") {
     it("should return 8 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell("*", 0, 0)
-      grid(0)(1) = Cell("*", 0, 1)
-      grid(0)(2) = Cell("*", 0, 2)
-      grid(1)(0) = Cell("*", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell("*", 1, 2)
-      grid(2)(0) = Cell("*", 2, 0)
-      grid(2)(1) = Cell("*", 2, 1)
-      grid(2)(2) = Cell("*", 2, 2)
+      val grid = List(
+        List(Cell(Cell.MINE, 0, 0), Cell(Cell.MINE, 0, 1), Cell(Cell.MINE, 0, 2)),
+        List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
+      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 1, 1))
 
       count shouldBe 8
     }
 
     it("should return 3 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell("*", 0, 1)
-      grid(0)(2) = Cell("*", 0, 2)
-      grid(1)(0) = Cell("*", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell("*", 1, 2)
-      grid(2)(0) = Cell("*", 2, 0)
-      grid(2)(1) = Cell("*", 2, 1)
-      grid(2)(2) = Cell("*", 2, 2)
+      val grid = List(
+        List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.MINE, 0, 1), Cell(Cell.MINE, 0, 2)),
+        List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
+        List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(" ", 0, 0))
+      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 0, 0))
       count shouldBe 2
     }
 
     it("should return 0 for given grid and cell") {
-      val grid = Array.ofDim[Cell](3, 3)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(0)(2) = Cell(" ", 0, 2)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-      grid(1)(2) = Cell(" ", 1, 2)
-      grid(2)(0) = Cell(" ", 2, 0)
-      grid(2)(1) = Cell(" ", 2, 1)
-      grid(2)(2) = Cell(" ", 2, 2)
+      val grid = List(
+        List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.EMPTY, 0, 1), Cell(Cell.EMPTY, 0, 2)),
+        List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.EMPTY, 1, 2)),
+        List(Cell(Cell.EMPTY, 2, 0), Cell(Cell.EMPTY, 2, 1), Cell(Cell.EMPTY, 2, 2)))
 
-      val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
+      val count = Panel.adjacentMines(grid, Cell(Cell.EMPTY, 1, 1))
       count shouldBe 0
     }
   }
@@ -65,15 +50,14 @@ class PanelTest extends FunSpec with Matchers {
       val panel = Panel(9)
 
       panel.grid should not be empty
-      assert(panel.grid.length == 9)
+      panel.grid.length shouldBe 9
 
       panel.grid.foreach(row => {
-        assert(row.length == 9)
+        row.length shouldBe 9
       })
 
-
-      assert(panel.dimension == 9)
-      assert(panel.status == PanelStatus.IN_PROGRESS)
+      panel.dimension shouldBe 9
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
     it("should create panel of dimension 20x20") {
@@ -92,13 +76,7 @@ class PanelTest extends FunSpec with Matchers {
     }
 
     it("should create a panel with give grid") {
-      val grid = Array.ofDim[Cell](2, 2)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-
-      val panel = Panel(grid)
+      val panel = Panel(grid2dAllCellEmpty)
 
       panel.grid should not be empty
       panel.grid.length shouldBe 2
@@ -112,28 +90,15 @@ class PanelTest extends FunSpec with Matchers {
     }
 
     it("should throw an exception") {
-      val grid = Array.ofDim[Cell](2, 2)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-
       intercept[IllegalArgumentException] {
-        Panel(3, grid)
+        Panel(3, grid2dAllCellEmpty)
       }
-
     }
 
     it("should give proper String formatted panel") {
-      val grid = Array.ofDim[Cell](2, 2)
-      grid(0)(0) = Cell(" ", 0, 0)
-      grid(0)(1) = Cell(" ", 0, 1)
-      grid(1)(0) = Cell(" ", 1, 0)
-      grid(1)(1) = Cell(" ", 1, 1)
-
-      val panel = Panel(2, grid)
+      val panel = Panel(2, grid2dAllCellEmpty)
       val panelString = panel.toString
-      val expectedString = "Panel: [Grid: (Cell( ,0,0,true), Cell( ,0,1,true), Cell( ,1,0,true), Cell( ,1,1,true))," +
+      val expectedString = "Panel: [Grid: List(Cell( ,0,0,true), Cell( ,0,1,true), Cell( ,1,0,true), Cell( ,1,1,true))," +
         " Dimension: 2, Status: IN_PROGRESS]"
 
       panelString shouldBe expectedString
