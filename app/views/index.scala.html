@@ -11,10 +11,59 @@
  *@
 @main("Welcome to Play") {
 
-    @*
-     * Get an `Html` object by calling the built-in Play welcome
-     * template and passing a `String` message.
-     *@
-     @play20.welcome(message, style = "Scala")
+	<div class = "row">
+		<div>
+			<button id="generate_panel">
+			Start
+			</button>	
+		</div>
+		<div class = "minesweeper_section">
+			<table id = 'minesweeper_table' border = '1'></table>	
+		</div>	
+	</div>	
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+			var isSetTable = false;
+			$('#generate_panel').click(function(){
+				if(!isSetTable){				
+					$.ajax({
+				    	type: "GET",
+				    	url: '/panel/get',
+				    	dataType: "json"
+				  	}).success(function( result ) {
+					 	console.log(result);
+
+							var theTable = "";
+							  for(var j = 0;j < result.dimension; j++){
+							      theTable += '<tr>';
+							      for(var k = 0; k < result.dimension; k++){  
+							      	id = j + '_' + k;
+							      	cell = result.grid[j][k]; 
+							      	if (cell.hidden)    
+							        	theTable += '<td><button id = '+ id +' class = "panel_cell"></button></td>';
+							        else
+							        	theTable += '<td><button id = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
+							      }
+							      theTable += '</tr>';
+							  }
+						   	
+						   	$('#minesweeper_table').append(theTable);	
+						   	isSetTable = true;
+				  	});
+			  	} 				
+			});
+		
+			$(document).on('click', '.panel_cell', function() {
+				if(!$(this).hasClass('visible')){
+					console.log($(this).attr('id'))
+					
+				}
+			});        	
+
+        });
+    </script>
+
 
 }
