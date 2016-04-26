@@ -1,12 +1,12 @@
 package services
 
 import models.{PanelStatus, Panel, PanelSubmit, Cell}
-import org.scalatest.FunSpec
+import org.scalatest.{Matchers, FunSpec}
 
 /**
   * Created by khn3193 on 4/25/16.
   */
-class PanelServiceTest extends FunSpec {
+class PanelServiceTest extends FunSpec with Matchers {
 
   describe("method process") {
     val grid = Array(
@@ -88,6 +88,16 @@ class PanelServiceTest extends FunSpec {
     }
 
 
+    describe("method newPanel") {
+      it("should give new panel of given dimension") {
+        val panelService = new PanelService
+        val panel1 = panelService.newPanel(10)
+        val panel2 = panelService.newPanel(20)
+
+        panel1.grid.length shouldBe 10
+        panel2.grid.length shouldBe 20
+      }
+    }
   }
 
 }

@@ -12,7 +12,7 @@ class PanelService {
   }
 
   def newPanel(dimension: Int): Panel = {
-    Panel(9)
+    Panel(dimension)
   }
 
 }

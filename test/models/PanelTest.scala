@@ -21,7 +21,8 @@ class PanelTest extends FunSpec with Matchers {
       grid(2)(2) = Cell("*", 2, 2)
 
       val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
-      assert(count == 8)
+
+      count shouldBe 8
     }
 
     it("should return 3 for given grid and cell") {
@@ -37,7 +38,7 @@ class PanelTest extends FunSpec with Matchers {
       grid(2)(2) = Cell("*", 2, 2)
 
       val count = Panel.adjacentMines(grid, Cell(" ", 0, 0))
-      assert(count == 2)
+      count shouldBe 2
     }
 
     it("should return 0 for given grid and cell") {
@@ -53,8 +54,7 @@ class PanelTest extends FunSpec with Matchers {
       grid(2)(2) = Cell(" ", 2, 2)
 
       val count = Panel.adjacentMines(grid, Cell(" ", 1, 1))
-      assert(count == 0)
-
+      count shouldBe 0
     }
   }
 
@@ -65,11 +65,12 @@ class PanelTest extends FunSpec with Matchers {
       val panel = Panel(9)
 
       panel.grid should not be empty
-      assert(panel.grid.size == 9)
+      assert(panel.grid.length == 9)
 
       panel.grid.foreach(row => {
-        assert(row.size == 9)
+        assert(row.length == 9)
       })
+
 
       assert(panel.dimension == 9)
       assert(panel.status == PanelStatus.IN_PROGRESS)
@@ -80,14 +81,14 @@ class PanelTest extends FunSpec with Matchers {
       val panel = Panel(20)
 
       panel.grid should not be empty
-      assert(panel.grid.size == 20)
+      panel.grid.length shouldBe 20
 
       panel.grid.foreach(row => {
-        assert(row.size == 20)
+        row.length shouldBe 20
       })
 
-      assert(panel.dimension == 20)
-      assert(panel.status == PanelStatus.IN_PROGRESS)
+      panel.dimension shouldBe 20
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
     it("should create a panel with give grid") {
@@ -100,14 +101,14 @@ class PanelTest extends FunSpec with Matchers {
       val panel = Panel(grid)
 
       panel.grid should not be empty
-      assert(panel.grid.size == 2)
+      panel.grid.length shouldBe 2
 
       panel.grid.foreach(row => {
-        assert(row.size == 2)
+        row.length shouldBe 2
       })
 
-      assert(panel.dimension == 2)
-      assert(panel.status == PanelStatus.IN_PROGRESS)
+      panel.dimension shouldBe 2
+      panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
     it("should throw an exception") {
@@ -122,9 +123,22 @@ class PanelTest extends FunSpec with Matchers {
       }
 
     }
+
+    it("should give proper String formatted panel") {
+      val grid = Array.ofDim[Cell](2, 2)
+      grid(0)(0) = Cell(" ", 0, 0)
+      grid(0)(1) = Cell(" ", 0, 1)
+      grid(1)(0) = Cell(" ", 1, 0)
+      grid(1)(1) = Cell(" ", 1, 1)
+
+      val panel = Panel(2, grid)
+      val panelString = panel.toString
+      val expectedString = "Panel: [Grid: (Cell( ,0,0,true), Cell( ,0,1,true), Cell( ,1,0,true), Cell( ,1,1,true))," +
+        " Dimension: 2, Status: IN_PROGRESS]"
+
+      panelString shouldBe expectedString
+    }
   }
-
-
 }
 
 

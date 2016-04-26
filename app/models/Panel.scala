@@ -12,22 +12,21 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = Pane
     val clickedCell = grid(clickedRow)(clickedCol)
 
     clickedCell match {
-      case Cell(Cell.MINE, _, _, _) => mineClicked()
+      case Cell(Cell.MINE, _, _, _) => mineClicked
       case Cell(Cell.EMPTY, _, _, _) => emptyClicked(clickedCell)
       case Cell(_, _, _, _) => numberClicked(clickedCell)
-      case _ => throw new IllegalArgumentException("Unexpected input")
     }
   }
 
-  def mineClicked() : Panel = {
+  private def mineClicked: Panel = {
     val newGrid = grid.map(row => row.map(cell => {
-      if(cell.value == Cell.MINE) Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
+      if(cell.value == Cell.MINE) cell.exposed
       else cell
     }))
     Panel(dimension, newGrid, PanelStatus.FAILED)
   }
 
-  def emptyClicked(clickedCell : Cell) : Panel = {
+  private def emptyClicked(clickedCell : Cell) : Panel = {
 
     def loop(originalList: List[Cell], formedList: List[Cell]): List[Cell] = originalList match {
       case Nil => formedList
@@ -35,7 +34,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = Pane
       case head :: tail if head.value == Cell.EMPTY =>
         val adjCells = Panel.adjacentCells(grid, head.rowIndex, head.colIndex, 1)
         val newCells = adjCells.map(c => if(!formedList.contains(c)) c else Cell.INVALID_CELL)
-        val validCells = newCells.filter(c => c != Cell.INVALID_CELL)
+        val validCells = newCells.filter(_ != Cell.INVALID_CELL)
         loop(tail ++ validCells, formedList ++ validCells)
     }
 
@@ -43,32 +42,30 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = Pane
     val exposedCells = loop(List(clickedCell), List(clickedCell))
 
     val newGrid = grid.map(row => row.map(cell => {
-      if(exposedCells.contains(cell)) Cell(cell.value, cell.rowIndex, cell.colIndex, false)
+      if(exposedCells.contains(cell)) cell.exposed
       else cell
     }))
 
     Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
   }
 
-  def numberClicked(clickedCell : Cell) : Panel = {
-    val newGrid = grid.map(row => row.map(cell =>
-      cell match {
-        case `clickedCell` => Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
-        case _ => cell
-      }
-    ))
+  private def numberClicked(clickedCell : Cell) : Panel = {
+    val newGrid: Array[Array[Cell]] = grid.map(row => row.map({
+        case `clickedCell` => clickedCell.exposed
+        case cell => cell
+      }))
     Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
   }
 
   override def toString: String = {
     val arr = grid.flatMap(row => row.map(cell => cell.toString)).toSeq
-    "Grid: \n" + arr.toString.drop(12) + "\nDimension: " + dimension //+ "\nStatus: " + status
+    "Panel: [" + "Grid: " + arr.toString.drop(12) + ", Dimension: " + dimension + ", Status: " + status + "]"
   }
 }
 
 object Panel {
-
   implicit val panelFormat = Json.format[Panel]
+  val dimensionToMines = Map(81 -> 10, 256 -> 40)
 
   def apply(dimension : Int): Panel = {
     apply(dimension, Panel.newGrid(dimension))
@@ -78,25 +75,7 @@ object Panel {
     apply(grid.length, grid)
   }
 
-  def generate(size : Int) : Array[String] = {
-    val maxIndex = size - 1
-    val minePanel = (0 to maxIndex).map(a => Cell.EMPTY).toArray
-    randomLocations(10).foreach(l => minePanel(l) = Cell.MINE)
-    minePanel
-  }
-
-  def generate2D(dimension: Int) : Array[Array[String]] = {
-    val panel1D = generate(dimension * dimension)
-
-    def loop(formedList: List[List[String]], list : List[String]): List[List[String]] = list match {
-      case Nil => formedList
-      case _ => loop(formedList :+ list.take(dimension), list.drop(dimension))
-    }
-
-    loop(Nil, panel1D.toList).map(row => row.toArray).toArray
-  }
-
-  def newGrid(dimension: Int) : Array[Array[Cell]] = {
+  private def newGrid(dimension: Int) : Array[Array[Cell]] = {
     val arr2 = generate2D(dimension).map(_.zipWithIndex).zipWithIndex
 
     val array2D = arr2.map(row => {
@@ -120,15 +99,36 @@ object Panel {
     })
   }
 
-  def randomLocations(n : Int): Array[Int] = {
+  private def generate2D(dimension: Int) : Array[Array[String]] = {
+    val panel1D = generate(dimension * dimension)
+
+    def loop[A](formedList: List[List[A]], list : List[A]): List[List[A]] = list match {
+      case Nil => formedList
+      case _ => loop(formedList :+ list.take(dimension), list.drop(dimension))
+    }
+
+    loop(Nil, panel1D.toList).map(row => row.toArray).toArray
+  }
+
+  private def generate(size : Int) : Array[String] = {
+    val maxIndex = size - 1
+    val minePanel = (0 to maxIndex).map(a => Cell.EMPTY).toArray
+    val mineCount = dimensionToMines.getOrElse(size, 0)
+    randomLocations(mineCount).foreach(l => minePanel(l) = Cell.MINE)
+    minePanel
+  }
+
+  private def randomLocations(n : Int): Array[Int] = {
     util.Random.shuffle(0 to 80).toArray.take(n)
   }
 
-  def adjacentCellValues(list: List[Cell]) : List[String] = {
-    list.filter(c => c != Cell.INVALID_CELL).map(c => c.value)
+  def adjacentMines(arr: Array[Array[Cell]], element: Cell): Int = {
+    val adjCells = adjacentCells(arr, element.rowIndex, element.colIndex, 1)
+    val adjCellValues = adjacentCellValues(adjCells)
+    adjCellValues.map(isMine).sum
   }
 
-  def adjacentCells(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
+  private def adjacentCells(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
     val rows = arr.length
     val columns = arr(0).length
 
@@ -145,13 +145,11 @@ object Panel {
     })).toList
   }
 
-  def adjacentMines(arr: Array[Array[Cell]], element: Cell): Int = {
-    val adjCells = adjacentCells(arr, element.rowIndex, element.colIndex, 1)
-    val adjCellValues = adjacentCellValues(adjCells)
-    adjCellValues map isMine sum
+  private def adjacentCellValues(list: List[Cell]) : List[String] = {
+    list.filter(_ != Cell.INVALID_CELL).map(c => c.value)
   }
 
-  def isMine(s: String): Int = {
+  private def isMine(s: String): Int = {
     if (s == Cell.MINE) 1 else 0
   }
 }
