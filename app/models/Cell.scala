@@ -7,9 +7,8 @@ import play.api.libs.json.Json
   */
 case class Cell(value : String, rowIndex: Int, colIndex: Int, hidden : Boolean = true) {
 
-  def exposed = {
-    Cell(value, rowIndex, colIndex, hidden = false)
-  }
+  def exposed = Cell(value, rowIndex, colIndex, hidden = false)
+
 }
 
 object Cell {

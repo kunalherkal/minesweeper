@@ -9,7 +9,7 @@ case class Grid(private val cells : List[List[Cell]]) {
 
   def cell(rowIndex: Int, colIndex: Int): Cell = cells(rowIndex)(colIndex)
 
-  def length: Int = cells.length
+  def dimension: Int = cells.length
 
   def afterMineClicked = {
     val newCells = cells.map(row => row.map(cell => {
@@ -50,9 +50,7 @@ case class Grid(private val cells : List[List[Cell]]) {
     Grid(newCells)
   }
 
-  def oneDimCellsWithoutMines = {
-    cells.flatten.filter(cell => cell.value != Cell.MINE)
-  }
+  def oneDimCellsWithoutMines = cells.flatten.filter(cell => cell.value != Cell.MINE)
 
   def flattenedCells = cells.flatten
 
@@ -75,9 +73,7 @@ case class Grid(private val cells : List[List[Cell]]) {
     })).toList
   }
 
-  override def toString: String = {
-    cells.flatMap(row => row.map(cell => cell.toString)).toSeq.toString()
-  }
+  override def toString: String = cells.flatMap(row => row.map(cell => cell.toString)).toSeq.toString()
 }
 
 object Grid {
@@ -131,9 +127,7 @@ object Grid {
     }).toList
   }
 
-  private def randomLocations(n : Int): List[Int] = {
-    util.Random.shuffle(0 to 80).toList.take(n)
-  }
+  private def randomLocations(n : Int): List[Int] = util.Random.shuffle(0 to 80).toList.take(n)
 
   def adjacentMineCount(grid: Grid, element: Cell): Int = {
     val adjCells = grid.adjacentCells(element.rowIndex, element.colIndex, 1)
@@ -141,12 +135,9 @@ object Grid {
     adjCellValues.map(isMine).sum
   }
 
-  private def adjacentCellValues(list: List[Cell]) : List[String] = {
-    list.filter(_ != Cell.INVALID_CELL).map(c => c.value)
-  }
+  private def adjacentCellValues(list: List[Cell]) : List[String] = list.filter(_ != Cell.INVALID_CELL).map(c => c.value)
 
-  private def isMine(s: String): Int = {
-    if (s == Cell.MINE) 1 else 0
-  }
+  private def isMine(s: String): Int = if (s == Cell.MINE) 1 else 0
+
 
 }

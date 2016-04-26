@@ -6,7 +6,7 @@ import play.api.libs.json.Json
   */
 case class Panel(dimension: Int, grid: Grid, status: String = PanelStatus.IN_PROGRESS) {
 
-  require(grid.length == dimension)
+  require(grid.dimension == dimension)
 
   def processClick(clickedRow:Int, clickedCol: Int): Panel = {
     val clickedCell = grid.cell(clickedRow, clickedCol)
@@ -54,6 +54,6 @@ object Panel {
   }
 
   def apply(grid: Grid): Panel = {
-    apply(grid.length, grid)
+    apply(grid.dimension, grid)
   }
 }

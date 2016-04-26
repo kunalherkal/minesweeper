@@ -102,8 +102,8 @@ class PanelServiceTest extends FunSpec with Matchers {
         val panel1 = panelService.newPanel(10)
         val panel2 = panelService.newPanel(20)
 
-        panel1.grid.length shouldBe 10
-        panel2.grid.length shouldBe 20
+        panel1.grid.dimension shouldBe 10
+        panel2.grid.dimension shouldBe 20
       }
     }
   }

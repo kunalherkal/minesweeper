@@ -14,8 +14,5 @@ class PanelService {
     panel.processClick(clickedRow, clickedCol)
   }
 
-  def newPanel(dimension: Int): Panel = {
-    Panel(dimension)
-  }
-
+  def newPanel(dimension: Int): Panel = Panel(dimension)
 }

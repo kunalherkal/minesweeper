@@ -10,46 +10,13 @@ class PanelTest extends FunSpec with Matchers {
     List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.EMPTY, 0, 1)),
     List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1)))
 
-  describe("Method adjacentMines") {
-    it("should return 8 for given grid and cell") {
-      val cells = List(
-        List(Cell(Cell.MINE, 0, 0), Cell(Cell.MINE, 0, 1), Cell(Cell.MINE, 0, 2)),
-        List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
-        List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
-
-      val count = Grid.adjacentMineCount(Grid(cells), Cell(Cell.EMPTY, 1, 1))
-
-      count shouldBe 8
-    }
-
-    it("should return 3 for given grid and cell") {
-      val cells = List(
-        List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.MINE, 0, 1), Cell(Cell.MINE, 0, 2)),
-        List(Cell(Cell.MINE, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.MINE, 1, 2)),
-        List(Cell(Cell.MINE, 2, 0), Cell(Cell.MINE, 2, 1), Cell(Cell.MINE, 2, 2)))
-
-      val count = Grid.adjacentMineCount(Grid(cells), Cell(Cell.EMPTY, 0, 0))
-      count shouldBe 2
-    }
-
-    it("should return 0 for given grid and cell") {
-      val cells = List(
-        List(Cell(Cell.EMPTY, 0, 0), Cell(Cell.EMPTY, 0, 1), Cell(Cell.EMPTY, 0, 2)),
-        List(Cell(Cell.EMPTY, 1, 0), Cell(Cell.EMPTY, 1, 1), Cell(Cell.EMPTY, 1, 2)),
-        List(Cell(Cell.EMPTY, 2, 0), Cell(Cell.EMPTY, 2, 1), Cell(Cell.EMPTY, 2, 2)))
-
-      val count = Grid.adjacentMineCount(Grid(cells), Cell(Cell.EMPTY, 1, 1))
-      count shouldBe 0
-    }
-  }
-
   describe("Panel") {
 
     it("should create panel of dimension 9x9") {
 
       val panel = Panel(9)
 
-      panel.grid.length shouldBe 9
+      panel.grid.dimension shouldBe 9
 
       panel.grid.getCells.foreach(row => {
         row.length shouldBe 9
@@ -63,7 +30,7 @@ class PanelTest extends FunSpec with Matchers {
 
       val panel = Panel(20)
 
-      panel.grid.length shouldBe 20
+      panel.grid.dimension shouldBe 20
 
       panel.grid.getCells.foreach(row => {
         row.length shouldBe 20
@@ -76,7 +43,7 @@ class PanelTest extends FunSpec with Matchers {
     it("should create a panel with give grid") {
       val panel = Panel(Grid(cells2dAllCellEmpty))
 
-      panel.grid.length shouldBe 2
+      panel.grid.dimension shouldBe 2
 
       panel.grid.getCells.foreach(row => {
         row.length shouldBe 2
@@ -86,12 +53,14 @@ class PanelTest extends FunSpec with Matchers {
       panel.status shouldBe PanelStatus.IN_PROGRESS
     }
 
-    it("should throw an exception") {
+    it("should throw an exception when dimension mismatches the grid size") {
       intercept[IllegalArgumentException] {
         Panel(3, Grid(cells2dAllCellEmpty))
       }
     }
+  }
 
+    describe("Method panel.toString()") {
     it("should give proper String formatted panel") {
       val panel = Panel(2, Grid(cells2dAllCellEmpty))
       val panelString = panel.toString
@@ -102,9 +71,9 @@ class PanelTest extends FunSpec with Matchers {
     }
   }
 
-  describe("Method isComplete") {
+  describe("Method panel.isComplete") {
 
-    it("should return false") {
+    it("should return false when panel isn't complete") {
       val cells = List(
         List(Cell("1", 0, 0), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2)),
         List(Cell("2", 1, 0), Cell("3", 1, 1), Cell(Cell.MINE, 1, 2)),
@@ -115,7 +84,7 @@ class PanelTest extends FunSpec with Matchers {
       panel.isComplete shouldBe false
     }
 
-    it("should return true") {
+    it("should return true when panel is complete") {
       val cells = List(
         List(Cell("1", 0, 0, hidden = false), Cell(Cell.MINE, 0, 1), Cell("2", 0, 2, hidden = false)),
         List(Cell("2", 1, 0, hidden = false), Cell("3", 1, 1, hidden = false), Cell(Cell.MINE, 1, 2)),
@@ -124,7 +93,6 @@ class PanelTest extends FunSpec with Matchers {
       val panel = Panel(3, Grid(cells))
 
       panel.isComplete shouldBe true
-
     }
    }
 }
