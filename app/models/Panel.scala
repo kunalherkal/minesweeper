@@ -4,7 +4,7 @@ import play.api.libs.json.Json
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
-case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InProgress") {
+case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = PanelStatus.IN_PROGRESS) {
 
   require(grid.length == dimension)
 
@@ -12,8 +12,8 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
     val clickedCell = grid(clickedRow)(clickedCol)
 
     clickedCell match {
-      case Cell("*", _, _, _) => mineClicked()
-      case Cell(" ", _, _, _) => emptyClicked(clickedCell)
+      case Cell(Cell.MINE, _, _, _) => mineClicked()
+      case Cell(Cell.EMPTY, _, _, _) => emptyClicked(clickedCell)
       case Cell(_, _, _, _) => numberClicked(clickedCell)
       case _ => throw new IllegalArgumentException("Unexpected input")
     }
@@ -21,21 +21,21 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
 
   def mineClicked() : Panel = {
     val newGrid = grid.map(row => row.map(cell => {
-      if(cell.value == "*") Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
+      if(cell.value == Cell.MINE) Cell(cell.value, cell.rowIndex, cell.colIndex, hidden = false)
       else cell
     }))
-    Panel(dimension, newGrid, "Failed")
+    Panel(dimension, newGrid, PanelStatus.FAILED)
   }
 
   def emptyClicked(clickedCell : Cell) : Panel = {
 
     def loop(originalList: List[Cell], formedList: List[Cell]): List[Cell] = originalList match {
       case Nil => formedList
-      case head :: tail if head.value != " " => loop(tail, formedList)
-      case head :: tail if head.value == " " =>
+      case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
+      case head :: tail if head.value == Cell.EMPTY =>
         val adjCells = Panel.adjacentCells(grid, head.rowIndex, head.colIndex, 1)
-        val newCells = adjCells.map(c => if(!formedList.contains(c)) c else Cell("K", 999, 999))
-        val validCells = newCells.filter(c => c.value != "K")
+        val newCells = adjCells.map(c => if(!formedList.contains(c)) c else Cell.INVALID_CELL)
+        val validCells = newCells.filter(c => c != Cell.INVALID_CELL)
         loop(tail ++ validCells, formedList ++ validCells)
     }
 
@@ -47,7 +47,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
       else cell
     }))
 
-    Panel(dimension, newGrid, "In Progress")
+    Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
   }
 
   def numberClicked(clickedCell : Cell) : Panel = {
@@ -57,7 +57,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
         case _ => cell
       }
     ))
-    Panel(dimension, newGrid, "In Progress")
+    Panel(dimension, newGrid, PanelStatus.IN_PROGRESS)
   }
 
   override def toString: String = {
@@ -67,6 +67,7 @@ case class Panel(dimension: Int, grid: Array[Array[Cell]], status: String = "InP
 }
 
 object Panel {
+
   implicit val panelFormat = Json.format[Panel]
 
   def apply(dimension : Int): Panel = {
@@ -79,8 +80,8 @@ object Panel {
 
   def generate(size : Int) : Array[String] = {
     val maxIndex = size - 1
-    val minePanel = (0 to maxIndex).map(a => " ").toArray
-    randomLocations(10).foreach(l => minePanel(l) = "*")
+    val minePanel = (0 to maxIndex).map(a => Cell.EMPTY).toArray
+    randomLocations(10).foreach(l => minePanel(l) = Cell.MINE)
     minePanel
   }
 
@@ -107,11 +108,11 @@ object Panel {
     array2D.map(row => {
       row.map({element =>
         element.value match {
-          case "*" => Cell("*", element.rowIndex, element.colIndex)
+          case Cell.MINE => Cell(Cell.MINE, element.rowIndex, element.colIndex)
           case _ =>
             val count = adjacentMines(array2D, element)
             count match {
-              case 0 => Cell(" ", element.rowIndex, element.colIndex)
+              case 0 => Cell(Cell.EMPTY, element.rowIndex, element.colIndex)
               case _ => Cell(count.toString, element.rowIndex, element.colIndex)
             }
         }
@@ -124,7 +125,7 @@ object Panel {
   }
 
   def adjacentCellValues(list: List[Cell]) : List[String] = {
-    list.filter(c => c.value != "K").map(c => c.value)
+    list.filter(c => c != Cell.INVALID_CELL).map(c => c.value)
   }
 
   def adjacentCells(arr: Array[Array[Cell]], currentRowIndex: Int, currentColumnIndex: Int, level: Int): List[Cell] = {
@@ -140,7 +141,7 @@ object Panel {
       val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
         if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
           arr(row)(column)
-        } else Cell("K", 999, 999, hidden = true)
+        } else Cell.INVALID_CELL
     })).toList
   }
 
@@ -151,6 +152,12 @@ object Panel {
   }
 
   def isMine(s: String): Int = {
-    if (s == "*") 1 else 0
+    if (s == Cell.MINE) 1 else 0
   }
+}
+
+object PanelStatus {
+  val IN_PROGRESS: String = "IN_PROGRESS"
+  val SUCCESS: String = "SUCCESS"
+  val FAILED: String = "FAILED"
 }

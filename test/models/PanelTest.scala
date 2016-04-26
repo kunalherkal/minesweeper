@@ -72,7 +72,7 @@ class PanelTest extends FunSpec with Matchers {
       })
 
       assert(panel.dimension == 9)
-      assert(panel.status == "InProgress")
+      assert(panel.status == PanelStatus.IN_PROGRESS)
     }
 
     it("should create panel of dimension 20x20") {
@@ -87,7 +87,7 @@ class PanelTest extends FunSpec with Matchers {
       })
 
       assert(panel.dimension == 20)
-      assert(panel.status == "InProgress")
+      assert(panel.status == PanelStatus.IN_PROGRESS)
     }
 
     it("should create a panel with give grid") {
@@ -107,7 +107,7 @@ class PanelTest extends FunSpec with Matchers {
       })
 
       assert(panel.dimension == 2)
-      assert(panel.status == "InProgress")
+      assert(panel.status == PanelStatus.IN_PROGRESS)
     }
 
     it("should throw an exception") {
@@ -118,7 +118,7 @@ class PanelTest extends FunSpec with Matchers {
       grid(1)(1) = Cell(" ", 1, 1)
 
       intercept[IllegalArgumentException] {
-        val panel = Panel(3, grid)
+        Panel(3, grid)
       }
 
     }

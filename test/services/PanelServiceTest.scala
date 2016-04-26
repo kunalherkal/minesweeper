@@ -1,6 +1,6 @@
 package services
 
-import models.{Panel, PanelSubmit, Cell}
+import models.{PanelStatus, Panel, PanelSubmit, Cell}
 import org.scalatest.FunSpec
 
 /**
@@ -20,13 +20,13 @@ class PanelServiceTest extends FunSpec {
       Array(Cell("1",7,0,true), Cell("*",7,1,true), Cell("1",7,2,true), Cell(" ",7,3,true), Cell(" ",7,4,true), Cell("1",7,5,true), Cell("*",7,6,true), Cell("2",7,7,true), Cell("1",7,8,true)),
       Array(Cell("1",8,0,true), Cell("1",8,1,true), Cell("1",8,2,true), Cell(" ",8,3,true), Cell(" ",8,4,true), Cell("1",8,5,true), Cell("1",8,6,true), Cell("1",8,7,true), Cell(" ",8,8,true)))
 
-    val panel = Panel(9, grid, "In Progress")
+    val panel = Panel(9, grid)
     it("should return panel with state as failed") {
       val panelService = new PanelService
       val panelSubmit = PanelSubmit(panel, 4, 0)
       val outputPanel = panelService.process(panelSubmit)
 
-      assert(outputPanel.status == "Failed")
+      assert(outputPanel.status == PanelStatus.FAILED)
     }
 
     it("should return panel with clicked cell as hidden false") {
@@ -34,7 +34,7 @@ class PanelServiceTest extends FunSpec {
       val panelSubmit = PanelSubmit(panel, 1, 0)
       val outputPanel = panelService.process(panelSubmit)
 
-      assert(outputPanel.status == "In Progress")
+      assert(outputPanel.status == PanelStatus.IN_PROGRESS)
       assert(outputPanel.grid(1)(0).hidden == false)
     }
 
@@ -43,7 +43,7 @@ class PanelServiceTest extends FunSpec {
       val panelSubmit = PanelSubmit(panel, 0, 0)
       val outputPanel = panelService.process(panelSubmit)
 
-      assert(outputPanel.status == "In Progress")
+      assert(outputPanel.status == PanelStatus.IN_PROGRESS)
       assert(outputPanel.grid(0)(0).hidden == false)
       assert(outputPanel.grid(0)(1).hidden == false)
       assert(outputPanel.grid(0)(2).hidden == false)
@@ -59,7 +59,7 @@ class PanelServiceTest extends FunSpec {
       val panelSubmit = PanelSubmit(panel, 4, 2)
       val outputPanel = panelService.process(panelSubmit)
 
-      assert(outputPanel.status == "In Progress")
+      assert(outputPanel.status == PanelStatus.IN_PROGRESS)
       assert(outputPanel.grid(3)(1).hidden == false)
       assert(outputPanel.grid(3)(2).hidden == false)
       assert(outputPanel.grid(3)(3).hidden == false)
