@@ -3,11 +3,8 @@ package controllers
 import org.scalatest.{Matchers, FunSpec}
 import org.scalatestplus.play.OneAppPerTest
 import play.api.libs.json.Json
-import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-
-import scala.concurrent.Future
 
 /**
   * Created by khn3193 on 4/26/16.
@@ -17,7 +14,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
 
   describe("HomeController with route /") {
 
-    it("render the index page") {
+    it("should render the index page") {
       val result = route(app, FakeRequest(GET, "/")).get
 
       status(result) shouldBe OK
@@ -28,7 +25,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
 
   describe("HomeController with route /panel/get") {
 
-    it("get new minesweeper panel") {
+    it("should get new minesweeper panel") {
       val result = route(app, FakeRequest(GET, "/panel/get")).get
 
       status(result) shouldBe OK
@@ -38,14 +35,14 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
 
   describe("HomeController with route /panel/submit") {
 
-    it("give error as unsupported media type") {
+    it("should give error as unsupported media type") {
       val result = route(app, FakeRequest(POST, "/panel/submit")).get
 
       status(result) shouldBe UNSUPPORTED_MEDIA_TYPE
     }
   }
 
-  it("give result with status Ok") {
+  it("should give result with status Ok") {
     val requestJson = """{
                         |   "clickedRowIndex":0,
                         |   "clickedColIndex":0,
@@ -567,7 +564,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
     contentType(result) shouldBe Some("application/json")
   }
 
-  it("give result with status BadRequest") {
+  it("should give result with status BadRequest") {
     val requestJson = """{
                         |   "clickeeedRowIndex":0,
                         |   "clickeeedColIndex":0,
