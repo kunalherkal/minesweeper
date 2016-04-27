@@ -1,3 +1,8 @@
+.game_header{
+    text-align: center;
+    padding: 15px;
+}
+
 .minesweeper_section button {
   width: 20px;
   height: 20px;
@@ -13,4 +18,22 @@
 
 .minesweeper_section .panel_cell.mine {
 	background-color: #EA4335;
+}
+
+/*FIREWORKS CSS*/
+#fireworks_container {
+    position: absolute;
+}
+
+#bg {
+    position: absolute; 
+    outline: 1px solid white;
+    z-index: 0;
+}
+
+#fireworks {
+    position: absolute;
+    top: 6px;
+    left: 9px;
+    z-index: 1;
 }

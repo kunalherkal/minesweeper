@@ -28,7 +28,7 @@ function generate_grid(resultJson) {
     }
     $('#minesweeper_table').empty();
     $('#minesweeper_table').append(theTable);
-    console.log(mines);
+
     if(isFail){
         for (var i = mines.length - 1; i >= 0; i--) {
             id = mines[i];
@@ -38,7 +38,11 @@ function generate_grid(resultJson) {
         $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
     }else if(isSuccess){
         $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
-        alert('Congratulataions! You Win the game');
+        $('#fireworks_container').show();
+        setTimeout(function() {
+            $('#fireworks_container').hide();
+        }, 5000);        
+        $('#fireworks_container').click(); //Trigger Fireworks
     }
 }
 
