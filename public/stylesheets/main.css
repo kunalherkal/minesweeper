@@ -2,3 +2,15 @@
   width: 20px;
   height: 20px;
 }
+
+.minesweeper_section .panel_cell {
+	background-color:#ebebe0;
+}
+
+.minesweeper_section .panel_cell.visible {
+	background-color: #fff;
+}
+
+.minesweeper_section .panel_cell.mine {
+	background-color: #EA4335;
+}

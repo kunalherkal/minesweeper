@@ -1,19 +1,45 @@
 function generate_grid(resultJson) {
     var theTable = "";
+    var isSuccess = false;
+    var isFail = false;
+    var mines = [];
+    if(resultJson.status === 'SUCCESS'){
+        isSuccess = true;
+    }else if(resultJson.status === 'FAILED'){
+        isFail = true;
+    }
     for(var j = 0;j < resultJson.dimension; j++){
         theTable += '<tr>';
         for(var k = 0; k < resultJson.dimension; k++){
             id = j + '_' + k;
             cell = resultJson.grid.cells[j][k];
+            if(isFail){
+                if(cell.value === '*')
+                    mines.push(id);
+            }
             if (cell.hidden)
-                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell" style="background-color:#ebebe0"></button></td>';
+                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell"></button></td>';
             else
-                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
+                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';                    
+            
+            
         }
         theTable += '</tr>';
     }
     $('#minesweeper_table').empty();
     $('#minesweeper_table').append(theTable);
+    console.log(mines);
+    if(isFail){
+        for (var i = mines.length - 1; i >= 0; i--) {
+            id = mines[i];
+            $('#' + id).removeClass('visible');
+            $('#' + id).addClass('mine');
+        }
+        $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
+    }else if(isSuccess){
+        $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
+        alert('Congratulataions! You Win the game');
+    }
 }
 
 function generate_submit_json(resultJson) {

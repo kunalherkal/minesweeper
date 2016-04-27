@@ -24,9 +24,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
         	var current_panel;
-			var isSetTable = false;
-			$('#generate_panel').click(function(){
-				if(!isSetTable){				
+			$('#generate_panel').click(function(){			
 					$.ajax({
 				    	type: "GET",
 				    	url: '/panel/get',
@@ -34,10 +32,9 @@
 				  	}).success(function( result ) {
 					 	console.log(result);
 					 	current_panel = result;
-						generate_grid(result)
-						isSetTable = true;
-				  	});
-			  	} 				
+						generate_grid(result);
+						$('#generate_panel').text('Restart');
+				  	});				
 			});
 		
 			$(document).on('click', '.panel_cell', function() {
@@ -58,8 +55,7 @@
 				    	data: JSON.stringify(generate_submit_json(submit_json))
 				  	}).success(function( result ) {
 					 	generate_grid(result);
-				  	});						
-
+				  	});
 				}
 			});
         });
