@@ -15,14 +15,19 @@
 <div class = "container">
     <div class = "row">
 		<div class = "col-sm-6 col-sm-offset-3">
+		
 			<div class = "game_header">
+				<center>
+					<div class="winner_alert alert alert-success" role="alert">
+				  		<strong>Congratulations!</strong> You win the game.
+					</div>
+				</center>				
 		        <button id="generate_panel" class="btn btn-default">
 	        		Start
-	    		</button>
+	    		</button>    		
     		</div>
-    		<br>
     		<center>
-				<div id="fireworks_container" style="display:none;">
+				<div id="fireworks_container">
 				    <canvas id="fireworks" width="516" height="302"/>
 				</div>
 			</center>    		

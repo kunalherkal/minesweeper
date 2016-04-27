@@ -245,7 +245,6 @@ function fireMultiple(remain, minTime, maxTime) {
 }
 
 $('#fireworks_container').on('click', function() {
-    console.log('hhhhhhh')
     fireMultiple(5, 200, 300);
 });
 

@@ -28,7 +28,6 @@ function generate_grid(resultJson) {
     }
     $('#minesweeper_table').empty();
     $('#minesweeper_table').append(theTable);
-
     if(isFail){
         for (var i = mines.length - 1; i >= 0; i--) {
             id = mines[i];
@@ -37,10 +36,12 @@ function generate_grid(resultJson) {
         }
         $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
     }else if(isSuccess){
+        $('.winner_alert').fadeIn();
         $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
         $('#fireworks_container').show();
         setTimeout(function() {
             $('#fireworks_container').hide();
+            $('.winner_alert').fadeOut();
         }, 5000);        
         $('#fireworks_container').click(); //Trigger Fireworks
     }
