@@ -1,30 +1,28 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
 @(message: String)
-
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
 @main("Welcome to Play") {
-
-	<div class = "row">
-		<div>
-			<button id="generate_panel">
-			Start
-			</button>	
-		</div>
-		<div class = "minesweeper_section">
-			<table id = 'minesweeper_table' border = '0'></table>
-		</div>	
-	</div>	
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <script src="@routes.Assets.versioned("javascripts/home.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("javascripts/jquery-2.1.1.js")" type="text/javascript"></script>
+</head>
+<body>
+<div class = "row">
+    <div>
+        <button id="generate_panel">
+            Start
+        </button>
+    </div>
+    <div class = "minesweeper_section">
+        <table id = 'minesweeper_table' border = '0'></table>
+    </div>
+</div>
+</body>
+</html>
     <script type="text/javascript">
         $(document).ready(function(){
-
         	var current_panel;
 			var isSetTable = false;
 			$('#generate_panel').click(function(){
@@ -65,38 +63,5 @@
 				}
 			});
         });
-
-	function generate_grid(resultJson) {
-		var theTable = "";
-		  for(var j = 0;j < resultJson.dimension; j++){
-		      theTable += '<tr>';
-		      for(var k = 0; k < resultJson.dimension; k++){  
-		      	id = j + '_' + k;
-		      	cell = resultJson.grid.cells[j][k]; 
-		      	if (cell.hidden)    
-		        	theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell" style="background-color:#ebebe0"></button></td>';
-		        else
-		        	theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';
-		      }
-		      theTable += '</tr>';
-		  }
-	   	$('#minesweeper_table').empty();
-	   	$('#minesweeper_table').append(theTable);		
-	}
-
-    function generate_submit_json(resultJson) {
-		    for(var j = 0;j < resultJson.panel.dimension; j++){
-		      for(var k = 0; k < resultJson.panel.dimension; k++){
-		      	var id = j + '_' + k;
-		      	var tableCell = document.getElementById(id);
-		      	if (tableCell.classList.contains("visible")) {
-		        	resultJson.panel.grid.cells[j][k].hidden = false
-		        }
-		      }
-		    }
-		    return resultJson;
-		}
-
-
     </script>
 }
