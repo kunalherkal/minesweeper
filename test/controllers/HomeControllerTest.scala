@@ -19,7 +19,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
-      contentAsString(result) should include ("Your new application is ready.")
+      contentAsString(result) should include ("Welcome to Play")
     }
   }
 
