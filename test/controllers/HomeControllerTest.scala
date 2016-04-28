@@ -26,7 +26,7 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
   describe("HomeController with route /panel/get") {
 
     it("should get new minesweeper panel") {
-      val result = route(app, FakeRequest(GET, "/panel/get")).get
+      val result = route(app, FakeRequest(GET, "/panel/get?rows=9&columns=9&mines=10")).get
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("application/json")
@@ -47,7 +47,9 @@ class HomeControllerTest extends FunSpec with Matchers with OneAppPerTest  {
                         |   "clickedRowIndex":0,
                         |   "clickedColIndex":0,
                         |   "panel":{
-                        |      "dimension":9,
+                        |      "rows":9,
+                        |      "columns":9,
+                        |      "mines":10,
                         |      "grid":{"cells":[
                         |         [
                         |            {

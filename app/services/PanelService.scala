@@ -7,11 +7,13 @@ import models.{PanelSubmit, Panel}
   */
 class PanelService {
 
-  def process(panelSubmit: PanelSubmit): Panel = {
+  def process(panelSubmit: PanelSubmit): PanelSubmit = {
     val clickedRow = panelSubmit.clickedRowIndex
     val clickedCol = panelSubmit.clickedColIndex
     val panel = panelSubmit.panel
-    panel.processClick(clickedRow, clickedCol)
+    val newPanel = panel.processClick(clickedRow, clickedCol)
+    PanelSubmit(newPanel, clickedRow, clickedCol)
+
   }
 
   def newPanel(rows: Int, columns: Int, mines: Int): Panel = Panel(rows, columns, mines)

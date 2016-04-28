@@ -20,7 +20,8 @@ class PanelServiceTest extends FunSpec with Matchers {
       List(Cell("1",7,0,hidden = true), Cell("*",7,1,hidden = true), Cell("1",7,2,hidden = true), Cell(" ",7,3,hidden = true), Cell(" ",7,4,hidden = true), Cell("1",7,5,hidden = true), Cell("*",7,6,hidden = true), Cell("2",7,7,hidden = true), Cell("1",7,8,hidden = true)),
       List(Cell("1",8,0,hidden = true), Cell("1",8,1,hidden = true), Cell("1",8,2,hidden = true), Cell(" ",8,3,hidden = true), Cell(" ",8,4,hidden = true), Cell("1",8,5,hidden = true), Cell("1",8,6,hidden = true), Cell("1",8,7,hidden = true), Cell(" ",8,8,hidden = true)))
 
-    val panel = Panel(9, Grid(cells))
+    val panel = Panel(Grid(cells), 9, 9, 10)
+
     it("should return panel with state as failed") {
       val panelService = new PanelService
       val panelSubmit = PanelSubmit(panel, 4, 0)
@@ -99,11 +100,11 @@ class PanelServiceTest extends FunSpec with Matchers {
     describe("method newPanel") {
       it("should give new panel of given dimension") {
         val panelService = new PanelService
-        val panel1 = panelService.newPanel(10)
-        val panel2 = panelService.newPanel(20)
+        val panel1 = panelService.newPanel(10, 10, 10)
+        val panel2 = panelService.newPanel(20, 20, 20)
 
-        panel1.grid.dimension shouldBe 10
-        panel2.grid.dimension shouldBe 20
+        panel1.grid.rows shouldBe 10
+        panel2.grid.rows shouldBe 20
       }
     }
   }

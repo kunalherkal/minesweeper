@@ -4,10 +4,10 @@ import play.api.libs.json.Json
 /**
   * Created by Kunal Herkal on 4/22/16.
   */
-case class Panel(grid: Grid, rows: Int, column: Int, mines: Int, status: String = PanelStatus.IN_PROGRESS) {
+case class Panel(grid: Grid, rows: Int, columns: Int, mines: Int, status: String = PanelStatus.IN_PROGRESS) {
 
   require(grid.rows == rows)
-  require(grid.columns == column)
+  require(grid.columns == columns)
 
   def processClick(clickedRow:Int, clickedCol: Int): Panel = {
     val clickedCell = grid.cell(clickedRow, clickedCol)
@@ -21,21 +21,21 @@ case class Panel(grid: Grid, rows: Int, column: Int, mines: Int, status: String 
 
   private def mineClicked: Panel = {
     val newGrid = grid.afterMineClicked
-    Panel(newGrid, rows, column, mines, PanelStatus.FAILED)
+    Panel(newGrid, rows, columns, mines, PanelStatus.FAILED)
   }
 
   private def emptyClicked(clickedCell : Cell) : Panel = {
     val newGrid = grid.afterEmptyClicked(clickedCell)
 
-    val panel = Panel(newGrid, rows, mines, column)
-    if(panel.isComplete) Panel(newGrid, rows, column, mines, PanelStatus.SUCCESS) else panel
+    val panel = Panel(newGrid, rows, columns, mines)
+    if(panel.isComplete) Panel(newGrid, rows, columns, mines, PanelStatus.SUCCESS) else panel
   }
 
   private def numberClicked(clickedCell : Cell) : Panel = {
     val newGrid = grid.afterNumberClicked(clickedCell)
 
-    val panel = Panel(newGrid, rows, mines, column)
-    if(panel.isComplete) Panel(newGrid, rows, column, mines, PanelStatus.SUCCESS) else panel
+    val panel = Panel(newGrid, rows, columns, mines)
+    if(panel.isComplete) Panel(newGrid, rows, columns, mines, PanelStatus.SUCCESS) else panel
   }
 
   def isComplete : Boolean = {
@@ -43,7 +43,7 @@ case class Panel(grid: Grid, rows: Int, column: Int, mines: Int, status: String 
   }
 
   override def toString: String = {
-    "Panel: [" + "Grid: " + grid.toString + ", Rows: " + rows + " Columns: " + column + ", Status: " + status + "]"
+    "Panel: [" + "Grid: " + grid.toString + ", Rows: " + rows + ", Columns: " + columns + ", Status: " + status + "]"
   }
 }
 
