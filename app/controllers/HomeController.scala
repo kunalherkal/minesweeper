@@ -36,8 +36,8 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toJson(errors)))
       },
       panelSubmit => {
-        val panel = panelService.process(panelSubmit)
-        Ok(Json.toJson(panel))
+        val newPanelSubmit = panelService.process(panelSubmit)
+        Ok(Json.toJson(newPanelSubmit))
       }
     )
   }
