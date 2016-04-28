@@ -5,7 +5,7 @@
 # An example controller showing a sample home page
 
 GET     /                           controllers.HomeController.index
-GET     /panel/get                  controllers.HomeController.getPanel
+GET     /panel/get                  controllers.HomeController.getPanel(rows: Int, columns: Int, mines: Int)
 POST    /panel/submit               controllers.HomeController.submitPanel
 
 # Map static resources from the /public folder to the /assets URL path

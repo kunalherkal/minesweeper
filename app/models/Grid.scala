@@ -9,7 +9,9 @@ case class Grid(private val cells : List[List[Cell]]) {
 
   def cell(rowIndex: Int, colIndex: Int): Cell = cells(rowIndex)(colIndex)
 
-  def dimension: Int = cells.length
+  def rows: Int = cells.length
+
+  def columns: Int = cells.head.length
 
   def afterMineClicked = {
     val newCells = cells.map(row => row.map(cell => {
@@ -80,8 +82,13 @@ object Grid {
   implicit val panelFormat = Json.format[Grid]
   val dimensionToMines = Map(81 -> 10, 256 -> 40)
 
-  def apply(dimension: Int) : Grid = {
-    val twoDimCellValues = generateTwoDimCellValues(dimension).map(_.zipWithIndex).zipWithIndex
+  def apply(rows: Int, columns: Int, mines: Int): Grid = {
+    val twoDimCellValues = generateTwoDimCellValues(rows, columns, mines)
+    getGrid(twoDimCellValues)
+  }
+
+  def getGrid(gridValues: List[List[String]]): Grid = {
+    val twoDimCellValues = gridValues.map(_.zipWithIndex).zipWithIndex
 
     val gridWithoutNumberCells = twoDimCellValues.map(row => {
       row._1.map(element => {
@@ -90,7 +97,7 @@ object Grid {
     })
 
     val finalGrid = gridWithoutNumberCells.map(row => {
-      row.map({element =>
+      row.map({ element =>
         element.value match {
           case Cell.MINE => Cell(Cell.MINE, element.rowIndex, element.colIndex)
           case _ =>
@@ -106,21 +113,20 @@ object Grid {
     Grid(finalGrid)
   }
 
-  private def generateTwoDimCellValues(dimension: Int) : List[List[String]] = {
-    val oneDimCellValues = generateOneDimCellValues(dimension * dimension)
+  private def generateTwoDimCellValues(rows: Int, columns: Int, mines: Int) : List[List[String]] = {
+    val oneDimCellValues = generateOneDimCellValues(rows * columns, mines)
 
     def loop[A](formedList: List[List[A]], list : List[A]): List[List[A]] = list match {
       case Nil => formedList
-      case _ => loop(formedList :+ list.take(dimension), list.drop(dimension))
+      case _ => loop(formedList :+ list.take(columns), list.drop(columns))
     }
 
     loop(Nil, oneDimCellValues)
   }
 
-  private def generateOneDimCellValues(size : Int) : List[String] = {
+  private def generateOneDimCellValues(size : Int, mines: Int) : List[String] = {
     val maxIndex = size - 1
-    val mineCount = dimensionToMines.getOrElse(size, 0)
-    val rndLocations = randomLocations(mineCount)
+    val rndLocations = randomLocations(mines)
 
     (0 to maxIndex).map(a => {
       if(rndLocations.contains(a)) Cell.MINE else Cell.EMPTY
@@ -138,6 +144,4 @@ object Grid {
   private def adjacentCellValues(list: List[Cell]) : List[String] = list.filter(_ != Cell.INVALID_CELL).map(c => c.value)
 
   private def isMine(s: String): Int = if (s == Cell.MINE) 1 else 0
-
-
 }

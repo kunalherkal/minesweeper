@@ -24,8 +24,8 @@ class HomeController @Inject()(panelService: PanelService) extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def getPanel = Action {
-    val panel = panelService.newPanel(9)
+  def getPanel(rows: Int, columns: Int, mines: Int) = Action {
+    val panel = panelService.newPanel(rows, columns, mines)
     Ok(Json.toJson(panel))
   }
 
