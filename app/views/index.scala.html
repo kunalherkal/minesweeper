@@ -22,9 +22,10 @@
 				  		<strong>Congratulations!</strong> You win the game.
 					</div>
 				</center>				
-		        <button id="generate_panel" class="btn btn-default">
-	        		Start
+		        <button id="generate_panel" class="btn btn-default btn-custom">
+	        		<img id = "generate_panel_icon" src="@routes.Assets.versioned("images/smile.png")"/>
 	    		</button>    		
+
     		</div>
     		<center>
 				<div id="fireworks_container">
@@ -41,21 +42,21 @@
 </body>
 </html>
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function(){       	
         	var current_panel;
 			$('#generate_panel').click(function(){	
-			        $('#fireworks_container').hide();		
+			        $('#fireworks_container').hide();	
+					$('#generate_panel_icon').attr('src','/assets/images/smile.png');			        	
 					$.ajax({
 				    	type: "GET",
-				    	url: '/panel/get',
+				    	url: '/panel/get?rows=9&columns=9&mines=10',
 				    	dataType: "json"
 				  	}).success(function( result ) {
 					 	current_panel = result;
 						generate_grid(result);
-						$('#generate_panel').text('Restart');
 				  	});				
 			});
-		
+
 			$(document).on('click', '.panel_cell', function() {
 				if(!$(this).hasClass('visible')){
 					current_cell = $(this).attr('id').split('_'); 
@@ -73,10 +74,11 @@
 				    	dataType: "json",
 				    	data: JSON.stringify(generate_submit_json(submit_json))
 				  	}).success(function( result ) {
-					 	generate_grid(result);
+					 	generate_grid(result.panel);
 				  	});
 				}
 			});
+			$('#generate_panel').trigger('click'); //INITIAL STATE		
         });
     </script>
 }

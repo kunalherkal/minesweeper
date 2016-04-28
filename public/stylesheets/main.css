@@ -28,6 +28,18 @@
 	margin-left: 100px;
 }
 
+.btn-custom {
+	border: none !important;
+}
+.btn-custom:hover,.btn-custom:focus{
+	border: none !important;
+	background-color: transparent!important;
+	outline: transparent!important;
+}
+#generate_panel_icon{
+	height: 40px;
+	width: 40px;
+}
 /*FIREWORKS CSS*/
 #fireworks_container {
     position: absolute;
