@@ -1,3 +1,6 @@
+.game_main_container{
+	background-color: cornflowerblue;
+}
 .game_header{
     text-align: center;
     padding: 15px;
@@ -27,7 +30,7 @@
 }
 
 .minesweeper_section .panel_cell {
-	background-color:#ebebe0;
+	background-color:#DCDCD4;
 }
 
 .minesweeper_section .panel_cell.visible {
