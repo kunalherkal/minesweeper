@@ -18,9 +18,9 @@ function generate_grid(resultJson) {
                     mines.push(id);
             }
             if (cell.hidden)
-                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell"></button></td>';
+                theTable += '<td><input  type = "button" id = '+ id +' name = '+ id +' class = "panel_cell"/></td>';
             else
-                theTable += '<td><button id = '+ id +' name = '+ id +' class = "panel_cell visible">'+ cell.value +'</button></td>';                    
+                theTable += '<td><input type = "button" id = '+ id +' name = '+ id +' class = "panel_cell visible" value = "'+ cell.value +'"/></td>';                    
             
             
         }

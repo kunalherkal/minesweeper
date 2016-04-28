@@ -3,9 +3,27 @@
     padding: 15px;
 }
 
-.minesweeper_section button {
-  width: 30px;
-  height: 30px;
+.minesweeper_section input {
+  	width: 30px;
+  	height: 30px;
+	font-size: 18px;
+	font-weight: bold;  
+}
+
+.minesweeper_section input[value="1"] {
+  	color: #4285F4;  
+}
+.minesweeper_section input[value="2"] {
+  	color: #34A853;  
+}
+.minesweeper_section input[value="3"] {
+  	color: #EA4335;  
+}
+.minesweeper_section input[value="4"] {
+  	color: #5F3469;  
+}
+.minesweeper_section input[value="5"] {
+  	color: #F19571;  
 }
 
 .minesweeper_section .panel_cell {
