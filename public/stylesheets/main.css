@@ -141,3 +141,10 @@ span.radio {
     margin-bottom:3px;
 }
 /*END*/
+
+.game_config_setting_table,.game_config_setting_table th {
+	text-align: center;
+}
+.game_config_setting_table .game_type{
+	text-align: left;
+}
