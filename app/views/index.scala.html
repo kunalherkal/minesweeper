@@ -137,7 +137,7 @@
 					  </span> 			        	
 			        </td>
 			        <td>
-					  <input type="number" id="custom_rows" class="form-control" value="20">			        	
+					  <input type="number" id="custom_rows" class="form-control" value="20">			    	
 			        </td>
 			        <td>
 					  <input type="number" id="custom_columns" class="form-control" value="30">		        	
@@ -164,6 +164,8 @@
         	var availableFlagCount;
         	var bombFlaggedCells = [];
         	var isGameStart = false;
+        	var max_rows = 40;
+        	var max_columns = 40;
 			var custom_rows = 9;
 			var custom_columns = 9;
 			var custom_mines = 10;        	
@@ -233,11 +235,15 @@
 					custom_columns = 30;
 					custom_mines = 99;								
 				}else if(selected_game === 'custom'){
-					custom_rows = $('#custom_rows').val();
-					custom_columns = $('#custom_columns').val();
-					custom_mines = $('#custom_mines').val();
-					max_mines = (parseInt(custom_rows) * parseInt(custom_columns)) - 1; 
-					if(parseInt(custom_mines) > max_mines)	
+					custom_rows = parseInt($('#custom_rows').val());
+					custom_columns = parseInt($('#custom_columns').val());
+					custom_mines = parseInt($('#custom_mines').val());
+					if(custom_rows > max_rows)
+						custom_rows = max_rows
+					if(custom_columns > max_columns)
+						custom_columns = max_columns
+					max_mines = (custom_rows * custom_columns) - 1; 
+					if(custom_mines > max_mines)	
 						custom_mines = max_mines;
 				}
 				get_panel(custom_rows,custom_columns,custom_mines);

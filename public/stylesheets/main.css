@@ -1,6 +1,7 @@
 .game_main_container{
 	padding: 15px;
 	background-color: cornflowerblue;
+	overflow: auto;
 }
 .game_header{
     text-align: center;
