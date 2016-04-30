@@ -126,14 +126,14 @@ object Grid {
 
   private def generateOneDimCellValues(size : Int, mines: Int) : List[String] = {
     val maxIndex = size - 1
-    val rndLocations = randomLocations(mines)
+    val rndLocations = randomLocations(mines, maxIndex)
 
     (0 to maxIndex).map(a => {
       if(rndLocations.contains(a)) Cell.MINE else Cell.EMPTY
     }).toList
   }
 
-  private def randomLocations(n : Int): List[Int] = util.Random.shuffle(0 to 80).toList.take(n)
+  private def randomLocations(mines : Int, gridSize: Int): List[Int] = util.Random.shuffle(0 to gridSize).toList.take(mines)
 
   def adjacentMineCount(grid: Grid, element: Cell): Int = {
     val adjCells = grid.adjacentCells(element.rowIndex, element.colIndex, 1)
