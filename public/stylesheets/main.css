@@ -46,11 +46,13 @@
 }
 
 .minesweeper_section .panel_cell.mine {
-	background-color: #EA4335;
+	background-image: url("/assets/images/bomb.png")!important;
+	background-repeat: no-repeat;
 }
 
 .minesweeper_section .panel_cell.bombflagged {
 	background-image: url("/assets/images/bombFlag.png");
+	background-repeat: no-repeat;
 }
 
 
@@ -71,8 +73,8 @@
 	outline: transparent!important;
 }
 #generate_panel_icon{
-	height: 40px;
-	width: 40px;
+	height: 30px;
+	width: 30px;
 }
 /*FIREWORKS CSS*/
 #fireworks_container {

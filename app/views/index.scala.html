@@ -16,16 +16,32 @@
     <div class = "row">
 		<div class = "col-sm-6 col-sm-offset-3 game_main_container">
 		
-			<div class = "game_header">
-				<center>
-					<div class="winner_alert alert alert-success" role="alert">
-				  		<strong>Congratulations!</strong> You win the game.
-					</div>
-				</center>				
-		        <button id="generate_panel" class="btn btn-default btn-custom">
-	        		<img id = "generate_panel_icon" src="@routes.Assets.versioned("images/smile.png")"/>
-	    		</button>    		
+			<div class = "row game_header">
+				<div class="col-xs-4">
+	    			<div class="">
+	    				<span style="font-size:25px;font-family:'digital-clock-font';" class="flagsCounter">
 
+	    				</span>
+		    		</div>						
+				</div>
+				<div class="col-xs-4">
+					<center>
+						<div class="winner_alert alert alert-success" role="alert">
+					  		<strong>Congratulations!</strong> You win the game.
+						</div>
+					</center>	
+					<center>
+				        <button id="generate_panel" class="btn btn-default btn-custom">
+			        		<img id = "generate_panel_icon" src="@routes.Assets.versioned("images/smile.png")"/>
+			    		</button> 		    					
+					</center> 									
+				</div>
+				<div class="col-xs-4">
+	    			<div class="game_timer">
+	    				<span style="font-size:25px;"><time style="font-family:'digital-clock-font';">00:00:00</time>
+	    				</span>
+		    		</div>					
+				</div>								
     		</div>
     		<center>
 				<div id="fireworks_container">
@@ -46,6 +62,7 @@
         	var current_panel;
         	var availableFlagCount;
         	var bombFlaggedCells = [];
+        	var isGameStart = false;
 			$('#generate_panel').click(function(){	
 			        $('#fireworks_container').hide();	
 			        $('.game_main_container').css('background-color','cornflowerblue');
@@ -58,13 +75,20 @@
 				  	}).success(function( result ) {
 					 	current_panel = result;
 					 	availableFlagCount = result.mines;
+					 	$('.flagsCounter').text(availableFlagCount);
 						generate_grid(result,removeBombFlaggedCells);
-        				bombFlaggedCells = [];						
+        				bombFlaggedCells = [];		
+        				clearTimer();	
+        				isGameStart = false;
+        				clearTimeout(t);			
 				  	});				
 			});
-		
 
 			$(document).on('click', '.panel_cell', function(event) {
+				if (!isGameStart){
+					startTimer();
+					isGameStart = true;
+				}
 				if(!$(this).hasClass('visible')){
 					current_cell_id = $(this).attr('id');
 					current_cell = current_cell_id.split('_');
@@ -80,6 +104,7 @@
 							bombFlaggedCells.push(current_cell_id);
 							availableFlagCount = availableFlagCount - 1;							
 						}
+						$('.flagsCounter').text(availableFlagCount);
 					}else if(!$(this).hasClass('bombflagged')){
 						var submit_json = {};
 						submit_json.clickedRowIndex = parseInt(current_cell[0]);
@@ -95,13 +120,51 @@
 					    	dataType: "json",
 					    	data: JSON.stringify(generate_submit_json(submit_json))
 					  	}).success(function( result ) {
+					  		if (result.panel.status === 'FAILED'){
+					  			clearTimeout(t);
+					  		}
 						 	generate_grid(result.panel,bombFlaggedCells);
 						 	setBombFlaggedCells(bombFlaggedCells);
 					  	});
 					}
 				}	
 			});
-			$('#generate_panel').trigger('click'); //INITIAL STATE		
+			$('#generate_panel').trigger('click'); //INITIAL STATE	
+
+var h1 = $('.game_timer span')[0],
+    seconds = 0, minutes = 0, hours = 0,
+    t;
+
+function add() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    
+    h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+    timer();
+}
+function timer() {
+    t = setTimeout(add, 1000);
+}
+
+/* Start timer */
+function startTimer() {
+	timer();
+}
+
+/* Clear timer */
+function clearTimer() {
+    h1.textContent = "00:00:00";
+    seconds = 0; minutes = 0; hours = 0;
+}
+
         });
     </script>
 }

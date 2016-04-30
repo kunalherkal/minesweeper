@@ -36,15 +36,15 @@ function generate_grid(resultJson,bombFlaggedCells) {
         $('.game_main_container').css('background-color','crimson');
         for (var i = mines.length - 1; i >= 0; i--) {
             id = mines[i];
-            $('#' + id).removeClass('visible');
+            $('#' + id).removeClass('visible'); 
             $('#' + id).addClass('mine');
         }
-        $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
+        $('#minesweeper_table').find("input").attr("disabled", "disabled"); //Disable table
     }else if(isSuccess){
         $('#generate_panel_icon').attr('src','/assets/images/happy.png');
         $('.game_main_container').css('background-color','chartreuse');
         $('.winner_alert').fadeIn();
-        $('#minesweeper_table').find("button").attr("disabled", "disabled"); //Disable table
+        $('#minesweeper_table').find("input").attr("disabled", "disabled"); //Disable table
         $('#fireworks_container').show();
         setTimeout(function() {
             $('#fireworks_container').hide();
@@ -81,3 +81,4 @@ function setBombFlaggedCells(array){
         $('#' + array[i]).addClass('bombflagged');
     }
 }
+
