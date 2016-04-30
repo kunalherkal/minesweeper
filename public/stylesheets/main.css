@@ -28,7 +28,15 @@
 .minesweeper_section input[value="5"] {
   	color: #F19571;  
 }
-
+.minesweeper_section input[value="6"] {
+  	color: #1ABC9C;  
+}
+.minesweeper_section input[value="7"] {
+  	color: #AF7AC5;  
+}
+.minesweeper_section input[value="8"] {
+  	color: #CB4335;  
+}
 .minesweeper_section .panel_cell {
 	background-color:#DCDCD4;
 }
@@ -40,6 +48,11 @@
 .minesweeper_section .panel_cell.mine {
 	background-color: #EA4335;
 }
+
+.minesweeper_section .panel_cell.bombflagged {
+	background-image: url("/assets/images/bombFlag.png");
+}
+
 
 .winner_alert{
 	display: none;

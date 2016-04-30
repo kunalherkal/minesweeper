@@ -1,4 +1,4 @@
-function generate_grid(resultJson) {
+function generate_grid(resultJson,bombFlaggedCells) {
     var theTable = "";
     var isSuccess = false;
     var isFail = false;
@@ -19,10 +19,12 @@ function generate_grid(resultJson) {
             }
             if (cell.hidden)
                 theTable += '<td><input  type = "button" id = '+ id +' name = '+ id +' class = "panel_cell"/></td>';
-            else
-                theTable += '<td><input type = "button" id = '+ id +' name = '+ id +' class = "panel_cell visible" value = "'+ cell.value +'"/></td>';                    
-            
-            
+            else{
+                if((jQuery.inArray( id, bombFlaggedCells ) === -1) || (isFail))
+                    theTable += '<td><input type = "button" id = '+ id +' name = '+ id +' class = "panel_cell visible" value = "'+ cell.value +'"/></td>';
+                else
+                    theTable += '<td><input type = "button" id = '+ id +' name = '+ id +' class = "panel_cell"/></td>';                        
+            }     
         }
         theTable += '</tr>';
     }
@@ -63,4 +65,19 @@ function generate_submit_json(resultJson) {
         }
     }
     return resultJson;
+}
+
+function removeBombFlaggedCells(array, item){
+    for(var i in array){
+        if(array[i]==item){
+            array.splice(i,1);
+            break;
+            }
+    }
+}
+
+function setBombFlaggedCells(array){
+    for(var i in array){
+        $('#' + array[i]).addClass('bombflagged');
+    }
 }
