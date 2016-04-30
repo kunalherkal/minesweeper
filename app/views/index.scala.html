@@ -236,7 +236,7 @@
 					custom_rows = $('#custom_rows').val();
 					custom_columns = $('#custom_columns').val();
 					custom_mines = $('#custom_mines').val();
-					max_mines = 100;
+					max_mines = (parseInt(custom_rows) * parseInt(custom_columns)) - 1; 
 					if(parseInt(custom_mines) > max_mines)	
 						custom_mines = max_mines;
 				}
