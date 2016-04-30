@@ -14,8 +14,10 @@
 <body>
 <div class = "container">
     <div class = "row">
-		<div class = "col-sm-6 col-sm-offset-3 game_main_container">
-		
+		<div class = "col-sm-12 game_main_container">
+		<div class="game">
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">Game</button>
+		</div>
 			<div class = "row game_header">
 				<div class="col-xs-4">
 	    			<div class="">
@@ -43,6 +45,7 @@
 		    		</div>					
 				</div>								
     		</div>
+
     		<center>
 				<div id="fireworks_container">
 				    <canvas id="fireworks" width="516" height="302"/>
@@ -53,8 +56,106 @@
 		    </div>			
 		</div>    	
     </div>
-
 </div>
+	<div class="modal fade bs-example-modal-sm" id="modal" tabindex="-1" role="dialog" >
+	  <div class="modal-dialog">
+	    <div class="modal-content" id="game_config_setting">
+			  <table class="table">
+			    <thead>
+			      <tr>
+			        <th></th>
+			        <th>Height</th>
+			        <th>Width</th>
+			        <th>Mines</th>
+			      </tr>
+			    </thead>			  	
+			    <tbody>
+			      <tr>
+			        <td>
+					  <span class='radio'>
+					    <input type='radio' id='beginner' name='game_config' checked='true' value="beginner" />
+						    <label for='beginner'><span></span>
+						    	Beginner
+						    </label>
+					  </span>			        	
+			        </td>
+			        <td>
+					  9			        	
+			        </td>
+			        <td>
+					  9			        	
+			        </td>
+			        <td>
+					  10 		        	
+			        </td>			        			        
+			      </tr>
+			      <tr>
+			        <td>
+					  <span class='radio'>
+					    <input type='radio' id='intermediate' name='game_config' value="intermediate" />
+					    	<label for='intermediate'><span></span>
+					    		Intermediate
+					    	</label>
+					  </span>			        	
+			        </td>
+			        <td>
+					  16			        	
+			        </td>
+			        <td>
+					  16			        	
+			        </td>
+			        <td>
+					  40 		        	
+			        </td>			        			        
+			      </tr>
+			      <tr>
+			        <td>
+					  <span class='radio'>
+					    <input type='radio' id='expert' name='game_config' value="expert"/>
+					    	<label for='expert'><span></span>
+					    		Expert
+					    	</label>
+					  </span>			        	
+			        </td>
+			        <td>
+					  16			        	
+			        </td>
+			        <td>
+					  30			        	
+			        </td>
+			        <td>
+					  99  		        	
+			        </td>			        			        
+			      </tr>
+			      <tr>
+			        <td>
+					  <span class='radio'>
+					    <input type='radio' id='custom' name='game_config' value="custom" />
+					    	<label for='custom'><span></span>
+					    		Custom
+					    	</label>
+					  </span> 			        	
+			        </td>
+			        <td>
+					  <input type="number" id="custom_rows" class="form-control" value="20">			        	
+			        </td>
+			        <td>
+					  <input type="number" id="custom_columns" class="form-control" value="30">		        	
+			        </td>
+			        <td>
+					  <input type="number" id="custom_mines" class="form-control" value="100">  		        	
+			        </td>			        			        
+			      </tr>		
+			      <tr>
+			      	<td colspan="4">
+			      		<button type="button" class="btn btn-default" id="new_game">New Game</button>      	
+			      	</td>
+			      </tr>	      			      
+			    </tbody>
+			  </table>
+	    </div>
+	  </div>
+	</div>
 </body>
 </html>
     <script type="text/javascript">
@@ -63,25 +164,11 @@
         	var availableFlagCount;
         	var bombFlaggedCells = [];
         	var isGameStart = false;
+			var custom_rows = 9;
+			var custom_columns = 9;
+			var custom_mines = 10;        	
 			$('#generate_panel').click(function(){	
-			        $('#fireworks_container').hide();	
-			        $('.game_main_container').css('background-color','cornflowerblue');
-					$('#generate_panel_icon').attr('src','/assets/images/smile.png');
-								        	
-					$.ajax({
-				    	type: "GET",
-				    	url: '/panel/get?rows=9&columns=9&mines=10',
-				    	dataType: "json"
-				  	}).success(function( result ) {
-					 	current_panel = result;
-					 	availableFlagCount = result.mines;
-					 	$('.flagsCounter').text(availableFlagCount);
-						generate_grid(result,removeBombFlaggedCells);
-        				bombFlaggedCells = [];		
-        				clearTimer();	
-        				isGameStart = false;
-        				clearTimeout(t);			
-				  	});				
+				get_panel(custom_rows,custom_columns,custom_mines);
 			});
 
 			$(document).on('click', '.panel_cell', function(event) {
@@ -120,7 +207,7 @@
 					    	dataType: "json",
 					    	data: JSON.stringify(generate_submit_json(submit_json))
 					  	}).success(function( result ) {
-					  		if (result.panel.status === 'FAILED'){
+					  		if (result.panel.status != 'IN_PROGRESS'){
 					  			clearTimeout(t);
 					  		}
 						 	generate_grid(result.panel,bombFlaggedCells);
@@ -131,39 +218,87 @@
 			});
 			$('#generate_panel').trigger('click'); //INITIAL STATE	
 
-var h1 = $('.game_timer span')[0],
-    seconds = 0, minutes = 0, hours = 0,
-    t;
+			$('#new_game').click(function(){
+				var selected_game = $('input[name=game_config]:checked', '#game_config_setting').val();
+				if (selected_game === 'beginner'){
+					custom_rows = 9;
+					custom_columns = 9;
+					custom_mines = 10;
+				}else if(selected_game === 'intermediate'){
+					custom_rows = 16;
+					custom_columns = 16;
+					custom_mines = 40;					
+				}else if(selected_game === 'expert'){;	
+					custom_rows = 16;
+					custom_columns = 30;
+					custom_mines = 99;								
+				}else if(selected_game === 'custom'){
+					custom_rows = $('#custom_rows').val();
+					custom_columns = $('#custom_columns').val();
+					custom_mines = $('#custom_mines').val();
+					max_mines = 100;
+					if(parseInt(custom_mines) > max_mines)	
+						custom_mines = max_mines;
+				}
+				get_panel(custom_rows,custom_columns,custom_mines);
+				$('#modal').modal('toggle');
+			});
+	
+	function get_panel(rows,columns,mines) {
+		$.ajax({
+	    	type: "GET",
+	    	url: '/panel/get?rows='+rows+'&columns='+columns+'&mines='+mines,
+	    	dataType: "json"
+	  	}).success(function( result ) {
+		 	current_panel = result;
+		 	availableFlagCount = result.mines;
+		 	$('.flagsCounter').text(availableFlagCount);
+			generate_grid(result,removeBombFlaggedCells);
+			bombFlaggedCells = [];		
+			clearTimer();	
+			isGameStart = false;
+			clearTimeout(t);			
+	  	});		
+        $('#fireworks_container').hide();	
+        $('.game_main_container').css('background-color','cornflowerblue');
+		$('#generate_panel_icon').attr('src','/assets/images/smile.png');	  	    
+	}
 
-function add() {
-    seconds++;
-    if (seconds >= 60) {
-        seconds = 0;
-        minutes++;
-        if (minutes >= 60) {
-            minutes = 0;
-            hours++;
-        }
-    }
-    
-    h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+	// Timer 
+	var h1 = $('.game_timer span')[0],
+	    seconds = 0, minutes = 0, hours = 0,
+	    t;
 
-    timer();
-}
-function timer() {
-    t = setTimeout(add, 1000);
-}
+	function add() {
+	    seconds++;
+	    if (seconds >= 60) {
+	        seconds = 0;
+	        minutes++;
+	        if (minutes >= 60) {
+	            minutes = 0;
+	            hours++;
+	        }
+	    }
+	    
+	    h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
 
-/* Start timer */
-function startTimer() {
-	timer();
-}
+	    timer();
+	}
+	function timer() {
+	    t = setTimeout(add, 1000);
+	}
 
-/* Clear timer */
-function clearTimer() {
-    h1.textContent = "00:00:00";
-    seconds = 0; minutes = 0; hours = 0;
-}
+	/* Start timer */
+	function startTimer() {
+		timer();
+	}
+
+	/* Clear timer */
+	function clearTimer() {
+	    h1.textContent = "00:00:00";
+	    seconds = 0; minutes = 0; hours = 0;
+	}
+	// End
 
         });
     </script>

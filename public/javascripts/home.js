@@ -42,7 +42,7 @@ function generate_grid(resultJson,bombFlaggedCells) {
         $('#minesweeper_table').find("input").attr("disabled", "disabled"); //Disable table
     }else if(isSuccess){
         $('#generate_panel_icon').attr('src','/assets/images/happy.png');
-        $('.game_main_container').css('background-color','chartreuse');
+        $('.game_main_container').css('background-color','#2ECC71');
         $('.winner_alert').fadeIn();
         $('#minesweeper_table').find("input").attr("disabled", "disabled"); //Disable table
         $('#fireworks_container').show();

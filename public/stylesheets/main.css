@@ -1,4 +1,5 @@
 .game_main_container{
+	padding: 15px;
 	background-color: cornflowerblue;
 }
 .game_header{
@@ -94,3 +95,49 @@
     left: 9px;
     z-index: 1;
 }
+
+/*GAME SETTING */
+span.radio > input[type='radio'] {
+    display:none;    
+}
+span.radio > label {    
+    display:table;     
+}
+span.radio > label > span {
+    display:table-cell;
+    width:20px;    
+    white-space:nowrap;    
+}
+span.radio > label > span:before {
+    content:'';
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    display:inline-block;
+    box-shadow: 0 0 4px 2px gray inset;
+    vertical-align:middle;       
+}
+span.radio > label > span:after {
+    content:'';
+    position:relative;    
+    display:inline-block;
+    vertical-align:middle; 
+    left:-16px;    
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    box-shadow:0 0 3px 1px red;
+    background:radial-gradient(circle at 2px 2px, white, red);
+    visibility:hidden;
+}
+span.radio > label:hover > span:before {
+    box-shadow: 0 0 5px 3px orange inset;
+}
+span.radio > input[type='radio']:checked + label > span:after {
+    visibility:visible;
+}
+span.radio {    
+    display:inline-block;
+    margin-bottom:3px;
+}
+/*END*/
