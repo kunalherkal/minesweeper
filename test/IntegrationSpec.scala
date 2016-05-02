@@ -14,7 +14,7 @@ class IntegrationSpec extends PlaySpec with OneServerPerTest with OneBrowserPerT
 
       go to ("http://localhost:" + port)
 
-      pageSource must include ("Welcome to Play")
+      pageSource must include ("Functional Minesweeper")
     }
   }
 }
