@@ -15,5 +15,4 @@ object Cell {
   implicit val cellFormat = Json.format[Cell]
   val MINE: String = "*"
   val EMPTY: String = " "
-  val INVALID_CELL = Cell("K", 999, 999, hidden = true)
 }

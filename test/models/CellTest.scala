@@ -30,10 +30,6 @@ class CellTest extends FunSpec with Matchers{
     it("should give correct empty space value") {
       Cell.MINE shouldBe "*"
     }
-
-    it("should give correct invalid cell") {
-      Cell.INVALID_CELL shouldBe Cell("K", 999, 999, hidden = true)
-    }
   }
 
 }

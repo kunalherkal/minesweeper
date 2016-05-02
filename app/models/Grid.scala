@@ -28,8 +28,8 @@ case class Grid(private val cells : List[List[Cell]]) {
       case head :: tail if head.value != Cell.EMPTY => loop(tail, formedList)
       case head :: tail if head.value == Cell.EMPTY =>
         val adjCells = adjacentCells(head.rowIndex, head.colIndex, 1)
-        val newCells = adjCells.map(cell => if(!formedList.contains(cell)) cell else Cell.INVALID_CELL)
-        val validCells = newCells.filter(_ != Cell.INVALID_CELL)
+        val validCellOption = adjCells.map(cell => if(!formedList.contains(cell)) Some(cell) else None)
+        val validCells = for(Some(cell) <- validCellOption) yield cell
         loop(tail ++ validCells, formedList ++ validCells)
     }
 
@@ -67,12 +67,14 @@ case class Grid(private val cells : List[List[Cell]]) {
     val startColumnIndex = currentColumnIndex - level
     val endColumnIndex = currentColumnIndex + level
 
-    (startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
+    val adjCellOption =(startRowIndex to endRowIndex).flatMap(row => (startColumnIndex to endColumnIndex).map(column => {
       val validElement = (row >= 0 && row < rows) && (column >= 0 && column < columns)
       if(validElement && !(row == currentRowIndex && column == currentColumnIndex)) {
-        cells(row)(column)
-      } else Cell.INVALID_CELL
+        Some(cells(row)(column))
+      } else None
     })).toList
+
+    for(Some(cell) <- adjCellOption) yield cell
   }
 
   override def toString: String = cells.flatMap(row => row.map(cell => cell.toString)).toSeq.toString()
@@ -133,7 +135,7 @@ object Grid {
     }).toList
   }
 
-  private def randomLocations(mines : Int, gridSize: Int): List[Int] = util.Random.shuffle(0 to gridSize).toList.take(mines)
+  private def randomLocations(mineCount : Int, gridSize: Int): List[Int] = util.Random.shuffle(0 to gridSize).toList.take(mineCount)
 
   def adjacentMineCount(grid: Grid, element: Cell): Int = {
     val adjCells = grid.adjacentCells(element.rowIndex, element.colIndex, 1)
@@ -141,7 +143,7 @@ object Grid {
     adjCellValues.map(isMine).sum
   }
 
-  private def adjacentCellValues(list: List[Cell]) : List[String] = list.filter(_ != Cell.INVALID_CELL).map(c => c.value)
+  private def adjacentCellValues(list: List[Cell]) : List[String] = list.map(c => c.value)
 
   private def isMine(s: String): Int = if (s == Cell.MINE) 1 else 0
 }
